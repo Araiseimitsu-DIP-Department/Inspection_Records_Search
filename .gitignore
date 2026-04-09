@@ -1,0 +1,72 @@
+﻿# === OS ===
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# === IDE・エディタ ===
+.idea/
+.vscode/
+*.code-workspace
+.cursor/
+
+# === Python バイトコード ===
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.py,cover
+*$py.class
+
+# === 仮想環境 ===
+.venv/
+venv/
+env/
+ENV/
+__pypackages__/
+
+# === テスト・型チェック・リンター ===
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.nox/
+.tox/
+.cache/
+coverage.xml
+
+# === ローカル設定（テンプレは追跡） ===
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# === PyInstaller / onefile ビルド（build_exe.ps1 / scripts/pyinstaller_build.py） ===
+build/
+dist/
+*.spec
+
+# === Python パッケージング（ setuptools 等） ===
+*.egg-info/
+pip-wheel-metadata/
+
+# === ログ・一時ディレクトリ ===
+logs/
+tmp/
+runtime/
+*.log
+*.tmp
+*.temp
+*.bak
+
+# === Excel 出力（アプリが Access 隣に保存する想定だが、誤ってリポジトリ直下に出た場合） ===
+*.xlsx
+
+# === Access・ローカル DB（運用 DB はコミットしない） ===
+*.accdb
+*.mdb
+*.laccdb
+*.ldb
+*.db
+*.sqlite3

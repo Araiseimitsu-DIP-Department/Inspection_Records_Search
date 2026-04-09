@@ -1,0 +1,293 @@
+Option Compare Database
+Option Explicit
+
+'表示ボタン
+Private Sub btnDisp_Click()
+    Dim strSQL As String
+    Dim sMsg As String
+    
+    sMsg = ""
+    If IsNull(Me.cboKensain) Then sMsg = "検査員の指定がありません"
+    If IsNull(Me.txtKaishibi) Then sMsg = "表示開始日は必ず指定してください"
+    
+    If sMsg <> "" Then
+        MsgBox sMsg, vbCritical + vbOKOnly, "確認"
+        Me.txtKaishibi.SetFocus
+        Exit Sub
+    End If
+        
+    strSQL = "SELECT 検査員ID, 生産ロットID, 工程NO, 日付, 時刻, 品番, 品名, 客先 "
+    strSQL = strSQL & "FROM t_外観検査記録 "
+    strSQL = strSQL & "WHERE 検査員ID = '" & Me.cboKensain & "' "
+    If Not IsNull(Me.txtShuryobi) Then
+        strSQL = strSQL & "AND 日付 BETWEEN #" & Me.txtKaishibi & "# "
+        strSQL = strSQL & "AND #" & Me.txtShuryobi & "# "
+    Else
+        strSQL = strSQL & "AND 日付 = #" & Me.txtKaishibi & "# "
+    End If
+    strSQL = strSQL & "ORDER BY 日付, 時刻;"
+    Me.f_個人別照会のサブフォーム1.Form.RecordSource = strSQL
+    
+    strSQL = "SELECT 検査員ID, 生産ロットID, 工程NO, 日付, 品番, 品名, 作業時間, 数量 "
+    strSQL = strSQL & "FROM t_外観検査集計 "
+    strSQL = strSQL & "WHERE 検査員ID = '" & Me.cboKensain & "' "
+    If Not IsNull(Me.txtShuryobi) Then
+        strSQL = strSQL & "AND 日付 BETWEEN #" & Me.txtKaishibi & "# "
+        strSQL = strSQL & "AND #" & Me.txtShuryobi & "# "
+    Else
+        strSQL = strSQL & "AND 日付 = #" & Me.txtKaishibi & "# "
+    End If
+    strSQL = strSQL & "ORDER BY 日付, ID;"
+    Me.f_個人別照会のサブフォーム2.Form.RecordSource = strSQL
+    
+    Me.Refresh
+    Me.txtKaishibi.SetFocus
+    
+End Sub
+
+'戻るボタン
+Private Sub btnToHome_Click()
+    DoCmd.Close acForm, "f_個人別照会"
+End Sub
+
+'検査員が更新された
+Private Sub cboKensain_AfterUpdate()
+    Me.btnDisp.SetFocus
+End Sub
+
+'フォームを開く時
+Private Sub Form_Open(Cancel As Integer)
+    Dim strSQL As String
+    
+    Me.f_個人別照会のサブフォーム1.Form.検査員ID.ColumnHidden = True
+    
+    Me.f_個人別照会のサブフォーム1.Form.生産ロットID.ColumnWidth = 567 * 2
+    Me.f_個人別照会のサブフォーム1.Form.工程NO.ColumnWidth = 567 * 1.4
+    Me.f_個人別照会のサブフォーム1.Form.日付.ColumnWidth = 567 * 2.3
+    Me.f_個人別照会のサブフォーム1.Form.時刻.ColumnWidth = 567 * 1.6
+    Me.f_個人別照会のサブフォーム1.Form.品番.ColumnWidth = 567 * 4.5
+    Me.f_個人別照会のサブフォーム1.Form.品名.ColumnWidth = 567 * 4.5
+    Me.f_個人別照会のサブフォーム1.Form.客先.ColumnWidth = 567 * 3
+
+    strSQL = "SELECT 検査員ID, 生産ロットID, 工程NO, 日付, 時刻, 品番, 品名, 客先 "
+    strSQL = strSQL & "FROM t_外観検査記録 "
+    strSQL = strSQL & "WHERE 検査員ID = 'ZZZZ';"
+    Me.f_個人別照会のサブフォーム1.Form.RecordSource = strSQL
+    
+    Me.f_個人別照会のサブフォーム2.Form.検査員ID.ColumnHidden = True
+    
+    Me.f_個人別照会のサブフォーム2.Form.生産ロットID.ColumnWidth = 567 * 2
+    Me.f_個人別照会のサブフォーム2.Form.工程NO.ColumnWidth = 567 * 1.4
+    Me.f_個人別照会のサブフォーム2.Form.日付.ColumnWidth = 567 * 2.3
+    Me.f_個人別照会のサブフォーム2.Form.品番.ColumnWidth = 567 * 4.5
+    Me.f_個人別照会のサブフォーム2.Form.品名.ColumnWidth = 567 * 4.5
+    Me.f_個人別照会のサブフォーム2.Form.作業時間.ColumnWidth = 567 * 1.6
+    Me.f_個人別照会のサブフォーム2.Form.数量.ColumnWidth = 567 * 1.6
+    
+    strSQL = "SELECT 検査員ID, 生産ロットID, 工程NO, 日付, 品番, 品名, 作業時間, 数量 "
+    strSQL = strSQL & "FROM t_外観検査集計 "
+    strSQL = strSQL & "WHERE 検査員ID = 'ZZZZ';"
+    Me.f_個人別照会のサブフォーム2.Form.RecordSource = strSQL
+End Sub
+
+
+Option Compare Database
+Option Explicit
+
+'表示ボタン
+Private Sub btnDisp_Click()
+    Dim strSQL As String
+    
+    If IsNull(Me.txtKaishibi) Then
+        MsgBox "開始日は必ず入力してください", vbCritical + vbOKOnly, "確認"
+        Me.txtKaishibi.SetFocus
+        Exit Sub
+    End If
+    
+    strSQL = "SELECT t_外観検査集計.検査員ID, t_検査員マスタ.検査員名, t_外観検査集計.日付, t_外観検査集計.生産ロットID, "
+    strSQL = strSQL & "t_外観検査集計.品番, 品名, t_外観検査集計.工程NO, t_外観検査集計.数量, t_外観検査集計.作業時間, t_外観検査集計.集計除外フラグ, "
+    strSQL = strSQL & "t_数値検査員マスタ.検査員名 AS 数値検査員名 "
+    strSQL = strSQL & "FROM ((t_外観検査集計 LEFT JOIN t_検査員マスタ ON t_外観検査集計.検査員ID = t_検査員マスタ.検査員ID) "
+    strSQL = strSQL & "LEFT JOIN t_数値検査記録 ON t_外観検査集計.生産ロットID = t_数値検査記録.生産ロットID) "
+    strSQL = strSQL & "LEFT JOIN t_数値検査員マスタ ON t_数値検査記録.検査員ID = t_数値検査員マスタ.検査員ID "
+    '日付指定
+    If Not IsNull(Me.txtKaishibi) And Not IsNull(Me.txtShuryobi) Then       '両方とも指定あり
+        strSQL = strSQL & "WHERE 日付 BETWEEN #" & Me.txtKaishibi & "# AND #" & Me.txtShuryobi & "#"
+    Else
+        strSQL = strSQL & "WHERE 日付 = #" & Me.txtKaishibi & "#"
+    End If
+    '品番指定
+    If Not IsNull(Me.txtHinban) Then
+        strSQL = strSQL & " AND 品番 = '" & Me.txtHinban & "'"
+    End If
+    strSQL = strSQL & " ORDER BY t_外観検査集計.日付, t_外観検査集計.検査員ID, t_外観検査集計.ID;"
+    
+    Me.f_表示のサブフォーム1.Form.RecordSource = strSQL
+    
+    Me.Refresh
+    
+    Me.txtKaishibi.SetFocus
+End Sub
+
+'生産ロットID別集計表示ボタン
+Private Sub btnDisp2_Click()
+    Dim strSQL As String
+    
+    'サブフォーム2のデータを表示
+    strSQL = strSQL & "SELECT 生産ロットID, 工程NO, 品番, "
+    strSQL = strSQL & "品名, 数量, 作業時間の合計 "
+    strSQL = strSQL & "FROM Q_生産ロット集計 "
+    
+    '品番条件をセット
+    If Not IsNull(Me.txtHinban2) Then
+        strSQL = strSQL & "WHERE 品番 = '" & Me.txtHinban2 & "' "
+    End If
+    
+    '工程No条件をセット
+    If Not IsNull(Me.txtKoutei) Then
+        If InStr(1, strSQL, "WHERE", vbTextCompare) > 0 Then            '既にWHERE句あり
+            strSQL = strSQL & "AND 工程NO = '" & Me.txtKoutei & "' "
+        Else
+            strSQL = strSQL & "WHERE 工程NO = '" & Me.txtKoutei & "' "
+        End If
+    End If
+    
+    strSQL = strSQL & "ORDER BY 生産ロットID, 工程NO;"
+    
+    Me.f_表示のサブフォーム2.Form.RecordSource = strSQL
+    
+    Me.Refresh
+    
+    Me.txtHinban2.SetFocus
+End Sub
+
+'エクスポートボタン
+Private Sub btnExport_Click()
+    Call ToExcelExport(Me.f_表示のサブフォーム1.Form.RecordsetClone, "外観検査集計.xlsx")
+End Sub
+
+'エクスポートボタン2
+Private Sub btnExport2_Click()
+    Call ToExcelExport(Me.f_表示のサブフォーム2.Form.RecordsetClone, "外観検査ロット別集計.xlsx")
+End Sub
+
+'Excelへエクスポート
+Private Sub ToExcelExport(objRS As Object, sFname As String)
+    Dim xls As Object           'Excel.Applicationを代入するオブジェクト変数
+    Dim wkb As Object           'Excel.Wookbookを代入するオブジェクト変数
+    Dim rst As DAO.Recordset    '現在のレコードセットを入れる変数
+    Dim idx As Long
+    Dim sPath As String
+    
+    If MsgBox("Excelデータへのエクスポートを行います。実行しますか？", vbQuestion + vbYesNo, "確認") <> vbYes Then Exit Sub
+
+    On Error GoTo Err_ToExcelExport
+    
+    DoCmd.SetWarnings False
+
+    Set rst = Nothing                                               'データリストの初期化
+    Set rst = objRS     'フォームのレコードセットのクローンを代入
+
+    'レコードが存在しない場合、処理を中止
+    If rst.BOF = True And rst.EOF = True Then
+        MsgBox "出力出来るデータがありません。", vbOKOnly + vbExclamation, "出力不可"
+        GoTo Exit_ToExcelExport
+    End If
+
+    'レコードが存在する場合、Excelに出力
+    rst.MoveFirst                                   'レコードセットの最初に移動
+    
+    Set xls = CreateObject("Excel.Application")     'Excelファイルを内部的に作成
+    Set wkb = xls.Workbooks.Add()                   '作成されたExcelファイルにワークブックを追加
+
+    '追加されたワークブックに、レコードセットのデータをコピー
+    With wkb.Worksheets(1)
+        For idx = 1 To rst.Fields.Count                     'Excel側のヘッダ部
+            .Cells(1, idx).Value = rst.Fields(idx - 1).Name
+        Next
+        .Range("A2").CopyFromRecordset Data:=rst            'データ部分
+    End With
+
+    'Excelを保存
+    sPath = Application.CurrentProject.Path                         'Accressと同じフォルダ
+    xls.Application.DisplayAlerts = False                           '上書き確認メッセージを出さない
+    wkb.Close SaveChanges:=True, FileName:=sPath & "\" & sFname     '保存
+    
+    'メモリに展開されたExcel用オブジェクト変数を開放
+    Set wkb = Nothing
+    Set xls = Nothing
+
+    DoCmd.SetWarnings True
+    
+    MsgBox "Excelファイルへ保存しました( " & sFname & " )", vbInformation + vbOKOnly, "確認"
+
+Exit_ToExcelExport:
+    objRS.Close               'レコードセットを閉じる
+    Set objRS = Nothing
+    Exit Sub
+
+Err_ToExcelExport:
+    MsgBox Err.Description
+    Resume Exit_ToExcelExport
+End Sub
+
+'個人別データ照会ボタン
+Private Sub btnKojinbetu_Click()
+    DoCmd.OpenForm "f_個人別照会", acNormal
+End Sub
+
+'リフレッシュボタン
+Private Sub btnRefresh_Click()
+    Me.Refresh
+End Sub
+
+'戻るボタン
+Private Sub btnToHome_Click()
+    DoCmd.Quit
+End Sub
+
+'フォームを開く時
+Private Sub Form_Open(Cancel As Integer)
+    Dim strSQL As String
+    
+    'サブフォーム1、列幅設定
+    Me.f_表示のサブフォーム1.Form.ID.ColumnHidden = True
+    
+    Me.f_表示のサブフォーム1.Form.検査員ID.ColumnWidth = 567 * 2.2
+    Me.f_表示のサブフォーム1.Form.検査員名.ColumnWidth = 567 * 2.1
+    Me.f_表示のサブフォーム1.Form.日付.ColumnWidth = 567 * 2.3
+    Me.f_表示のサブフォーム1.Form.生産ロットID.ColumnWidth = 567 * 2.6
+    Me.f_表示のサブフォーム1.Form.品番.ColumnWidth = 567 * 4.9
+    Me.f_表示のサブフォーム1.Form.品名.ColumnWidth = 567 * 4.9
+    Me.f_表示のサブフォーム1.Form.工程NO.ColumnWidth = 567 * 1.4
+    Me.f_表示のサブフォーム1.Form.数量.ColumnWidth = 567 * 2.2
+    Me.f_表示のサブフォーム1.Form.作業時間.ColumnWidth = 567 * 2.2
+    Me.f_表示のサブフォーム1.Form.集計除外フラグ.ColumnHidden = True
+    Me.f_表示のサブフォーム1.Form.数値検査員名.ColumnWidth = 567 * 2.9
+
+    'サブフォーム1のデータを表示しない(存在しない検査員IDを抽出)
+    strSQL = "SELECT t_外観検査集計.検査員ID, t_検査員マスタ.検査員名, t_外観検査集計.日付, t_外観検査集計.生産ロットID, "
+    strSQL = strSQL & "t_外観検査集計.品番, 品名, t_外観検査集計.工程NO, t_外観検査集計.数量, t_外観検査集計.作業時間, t_外観検査集計.集計除外フラグ, "
+    strSQL = strSQL & "t_数値検査員マスタ.検査員名 AS 数値検査員名 "
+    strSQL = strSQL & "FROM ((t_外観検査集計 LEFT JOIN t_検査員マスタ ON t_外観検査集計.検査員ID = t_検査員マスタ.検査員ID) "
+    strSQL = strSQL & "LEFT JOIN t_数値検査記録 ON t_外観検査集計.生産ロットID = t_数値検査記録.生産ロットID) "
+    strSQL = strSQL & "LEFT JOIN t_数値検査員マスタ ON t_数値検査記録.検査員ID = t_数値検査員マスタ.検査員ID "
+    strSQL = strSQL & "WHERE t_外観検査集計.検査員ID = 'ZZZZ';"
+    Me.f_表示のサブフォーム1.Form.RecordSource = strSQL
+    
+    'サブフォーム2、列幅設定
+    Me.f_表示のサブフォーム2.Form.生産ロットID.ColumnWidth = 567 * 2.6
+    Me.f_表示のサブフォーム2.Form.品番.ColumnWidth = 567 * 5
+    Me.f_表示のサブフォーム2.Form.品名.ColumnWidth = 567 * 5
+    Me.f_表示のサブフォーム2.Form.工程NO.ColumnWidth = 567 * 1.4
+    Me.f_表示のサブフォーム2.Form.数量.ColumnWidth = 567 * 2.2
+    Me.f_表示のサブフォーム2.Form.作業時間の合計.ColumnWidth = 567 * 2.2
+    
+    'サブフォーム2のデータを表示しない(存在しない生産ロットIDを抽出)
+    strSQL = "SELECT Q_生産ロット集計.生産ロットID, Q_生産ロット集計.工程NO, Q_生産ロット集計.品番, "
+    strSQL = strSQL & "Q_生産ロット集計.品名, Q_生産ロット集計.数量, Q_生産ロット集計.作業時間の合計 "
+    strSQL = strSQL & "FROM Q_生産ロット集計 "
+    strSQL = strSQL & "WHERE Q_生産ロット集計.生産ロットID = 'Z999999';"
+    Me.f_表示のサブフォーム2.Form.RecordSource = strSQL
+    
+End Sub

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<html lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Production Lot ID Summary - Record Inquiry</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@700;800;900&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline-variant": "#abb3b7",
+                    "error": "#9f403d",
+                    "primary-container": "#d7e2ff",
+                    "on-secondary-fixed-variant": "#5b5b5f",
+                    "on-tertiary-fixed-variant": "#5a5470",
+                    "surface-dim": "#d1dce0",
+                    "inverse-primary": "#498eff",
+                    "surface-variant": "#dbe4e7",
+                    "on-surface-variant": "#586064",
+                    "on-secondary-fixed": "#3f3f43",
+                    "on-primary": "#f7f7ff",
+                    "inverse-on-surface": "#9b9d9e",
+                    "inverse-surface": "#0c0f10",
+                    "secondary-dim": "#535356",
+                    "on-primary-container": "#004fa7",
+                    "on-error": "#fff7f6",
+                    "tertiary-container": "#e1d8fa",
+                    "primary": "#005bbf",
+                    "tertiary-dim": "#554f6b",
+                    "surface-container-high": "#e3e9ec",
+                    "surface-container": "#eaeff1",
+                    "background": "#f8f9fa",
+                    "primary-fixed": "#d7e2ff",
+                    "on-primary-fixed-variant": "#0058b9",
+                    "secondary-fixed-dim": "#d5d4d8",
+                    "surface": "#f8f9fa",
+                    "outline": "#737c7f",
+                    "on-tertiary-container": "#504b66",
+                    "surface-bright": "#f8f9fa",
+                    "primary-fixed-dim": "#c2d4ff",
+                    "tertiary-fixed-dim": "#d3caeb",
+                    "secondary": "#5f5f62",
+                    "surface-container-low": "#f1f4f6",
+                    "on-tertiary-fixed": "#3d3852",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-highest": "#dbe4e7",
+                    "secondary-container": "#e4e2e6",
+                    "on-secondary": "#faf8fc",
+                    "on-secondary-container": "#515155",
+                    "on-error-container": "#752121",
+                    "on-background": "#2b3437",
+                    "primary-dim": "#0050a8",
+                    "on-tertiary": "#fcf7ff",
+                    "error-container": "#fe8983",
+                    "surface-tint": "#005bbf",
+                    "secondary-fixed": "#e4e2e6",
+                    "on-surface": "#2b3437",
+                    "on-primary-fixed": "#003d84",
+                    "error-dim": "#4e0309",
+                    "tertiary": "#615b77",
+                    "tertiary-fixed": "#e1d8fa"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .tonal-shift { transition: background-color 0.3s ease; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface flex min-h-screen overflow-hidden">
+<!-- SideNavBar Component -->
+<aside class="flex flex-col h-full py-8 px-4 h-screen w-64 border-r-0 tonal-shift bg-slate-100 dark:bg-slate-800/50 fixed left-0 top-0 z-50">
+<div class="mb-10 px-4">
+<h1 class="text-lg font-bold text-slate-900 dark:text-slate-100 font-headline" style="">Record Inquiry</h1>
+<p class="text-xs font-manrope tracking-tight text-on-surface-variant opacity-70" style="">System Archive</p>
+</div>
+<nav class="flex-1 space-y-2">
+<!-- Tab 1: 検査員別集計 -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors hover:bg-slate-200/50 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 font-medium font-manrope text-sm tracking-tight group" href="#" style="">
+<span class="material-symbols-outlined" data-icon="analytics" style="">analytics</span>
+<span class="" style="">検査員別集計</span>
+</a>
+<!-- Tab 2: 生産ロットID別集計 (ACTIVE) -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-blue-700 dark:text-blue-300 font-bold border-r-4 border-blue-600 dark:border-blue-400 bg-white/50 dark:bg-slate-900/50 font-manrope text-sm tracking-tight" href="#" style="">
+<span class="material-symbols-outlined" data-icon="inventory" style='font-variation-settings: "FILL" 1;'>inventory</span>
+<span class="" style="">生産ロットID別集計</span>
+</a>
+</nav>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 ml-64 min-h-screen overflow-y-auto bg-surface">
+<!-- TopAppBar Component -->
+<header class="flex items-center justify-between px-8 py-4 w-full bg-white dark:bg-slate-950 sticky top-0 z-40">
+<div class="flex items-center gap-4">
+<span class="text-xl font-black text-slate-900 dark:text-slate-100 font-headline" style="">生産ロットID別集計</span>
+</div>
+<div class="flex items-center gap-6">
+</div>
+</header>
+<!-- Content Area -->
+<div class="p-10 max-w-7xl mx-auto space-y-10">
+<!-- Bento-style Filter Section -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<div class="md:col-span-8 bg-surface-container-low p-8 rounded-xl shadow-sm">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary" data-icon="filter_list" style="">filter_list</span>
+<h2 class="font-headline font-bold text-on-surface" style="">Analysis Filters</h2>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+<!-- Filter: Part Number -->
+<div class="space-y-2">
+<label class="text-xs font-bold text-on-surface-variant tracking-widest uppercase" style="">Part Number</label>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border-0 rounded-md px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 transition-all placeholder:opacity-50" placeholder="Enter PN..." type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-3 text-on-surface-variant text-sm" data-icon="search" style="">search</span>
+</div>
+</div>
+<!-- Filter: Process No -->
+<div class="space-y-2">
+<label class="text-xs font-bold text-on-surface-variant tracking-widest uppercase" style="">Process No</label>
+<select class="w-full bg-surface-container-lowest border-0 rounded-md px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 transition-all">
+<option>All Processes</option>
+<option>PRC-101 (Molding)</option>
+<option>PRC-205 (Finishing)</option>
+<option>PRC-302 (QC Check)</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Export/Action Card -->
+<div class="md:col-span-4 bg-primary rounded-xl p-8 flex flex-col justify-between text-on-primary shadow-lg shadow-primary/10">
+<div>
+<h3 class="font-headline font-bold text-lg mb-2" style="">Execute Summary</h3>
+<p class="text-sm opacity-80 leading-relaxed" style="">Generate a real-time aggregate report based on the selected production parameters.</p>
+</div>
+<button class="w-full py-4 mt-6 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full font-bold transition-all flex items-center justify-center gap-2" style="">
+<span class="material-symbols-outlined" data-icon="analytics" style="">analytics</span>
+                        Run Aggregate
+                    </button>
+</div>
+</section>
+<!-- Results Section -->
+<section class="space-y-4">
+<div class="flex items-end justify-between px-2">
+<div>
+<h2 class="font-headline font-extrabold text-2xl text-on-surface" style="">Lot Performance Table</h2>
+<p class="text-on-surface-variant text-sm" style="">Aggregated results by production identifier</p>
+</div>
+<div class="flex gap-2">
+<span class="px-4 py-2 bg-tertiary-container text-on-tertiary-container rounded-full text-xs font-bold flex items-center gap-1" style="">
+<span class="material-symbols-outlined text-sm" data-icon="download" style="">download</span>
+                            CSV
+                        </span>
+<span class="px-4 py-2 bg-secondary-container text-on-secondary-container rounded-full text-xs font-bold flex items-center gap-1" style="">
+<span class="material-symbols-outlined text-sm" data-icon="print" style="">print</span>
+                            Print
+                        </span>
+</div>
+</div>
+<!-- Modern Data Table -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/50">
+<th class="px-8 py-5 text-xs font-bold text-on-surface-variant tracking-wider uppercase font-label" style="">Production Lot ID</th>
+<th class="px-8 py-5 text-xs font-bold text-on-surface-variant tracking-wider uppercase font-label" style="">Part Name</th>
+<th class="px-8 py-5 text-xs font-bold text-on-surface-variant tracking-wider uppercase font-label text-right" style="">Quantity (pcs)</th>
+<th class="px-8 py-5 text-xs font-bold text-on-surface-variant tracking-wider uppercase font-label text-right" style="">Work Hours (h)</th>
+<th class="px-8 py-5 text-xs font-bold text-on-surface-variant tracking-wider uppercase font-label text-center" style="">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-high/40 transition-colors">
+<td class="px-8 py-6 font-manrope font-bold text-primary" style="">LOT-20231024-A</td>
+<td class="px-8 py-6 text-sm text-on-surface" style="">Front Housing Case Alpha</td>
+<td class="px-8 py-6 text-sm text-right font-mono tabular-nums" style="">1,240</td>
+<td class="px-8 py-6 text-sm text-right font-mono tabular-nums" style="">42.5</td>
+<td class="px-8 py-6 text-center" style="">
+<span class="inline-block px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded-sm uppercase tracking-tighter" style="">Completed</span>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-high/40 transition-colors">
+<td class="px-8 py-6 font-manrope font-bold text-primary" style="">LOT-20231024-B</td>
+<td class="px-8 py-6 text-sm text-on-surface" style="">Mounting Bracket V3</td>
+<td class="px-8 py-6 text-sm text-right font-mono tabular-nums" style="">850</td>
+<td class="px-8 py-6 text-sm text-right font-mono tabular-nums" style="">18.2</td>
+<td class="px-8 py-6 text-center" style="">
+<span class="inline-block px-2 py-1 bg-blue-100 text-blue-700 text-[10px] font-bold rounded-sm uppercase tracking-tighter" style="">In Progress</span>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-high/40 transition-colors">
+<td class="px-8 py-6 font-manrope font-bold text-primary" style="">LOT-20231023-F</td>
+<td class="px-8 py-6 text-sm text-on-surface" style="">Sensor Cap Assembly</td>
+<td class="px-8 py-6 text-sm text-right font-mono tabular-nums" style="">3,100</td>
+<td class="px-8 py-6 text-sm text-right font-mono tabular-nums" style="">115.0</td>
+<td class="px-8 py-6 text-center" style="">
+<span class="inline-block px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded-sm uppercase tracking-tighter" style="">Completed</span>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-high/40 transition-colors">
+<td class="px-8 py-6 font-manrope font-bold text-primary" style="">LOT-20231023-X</td>
+<td class="px-8 py-6 text-sm text-on-surface" style="">Base Unit Chassis</td>
+<td class="px-8 py-6 text-sm text-right font-mono tabular-nums" style="">420</td>
+<td class="px-8 py-6 text-sm text-right font-mono tabular-nums" style="">64.8</td>
+<td class="px-8 py-6 text-center" style="">
+<span class="inline-block px-2 py-1 bg-orange-100 text-orange-700 text-[10px] font-bold rounded-sm uppercase tracking-tighter" style="">Pending QC</span>
+</td>
+</tr>
+</tbody>
+<tfoot>
+<tr class="bg-surface-container-low/30 border-t border-outline-variant/20">
+<td class="px-8 py-5 text-sm font-bold text-on-surface-variant" colspan="2" style="">Total Summary</td>
+<td class="px-8 py-5 text-sm text-right font-bold font-mono text-primary" style="">5,610</td>
+<td class="px-8 py-5 text-sm text-right font-bold font-mono text-primary" style="">240.5</td>
+<td class="" style=""></td>
+</tr>
+</tfoot>
+</table>
+</div>
+</section>
+<!-- Decorative Visual Context (Bento Side Item) -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-12">
+<div class="relative h-48 rounded-xl overflow-hidden group">
+<img alt="Production Environment" class="w-full h-full object-cover grayscale opacity-40 group-hover:grayscale-0 transition-all duration-500" data-alt="Modern high-tech industrial assembly line with automated robotic arms and soft blue ambient laboratory lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvoBuAWHFFRG-sp-lnpPC_zRBWd1kJfRxmaNp6l-PAf2PDbTve11yQ43cV2zrVXQTZgMBaNIrhFy-vW5uYFdRSrj7JvEzYgqKfowlCr4cIZBDDe2bDrIsOctNaERnFpyFxyWzckEoJYkLSw61Uap7pEB-61Qh_pjiwpXoIKdhc5df984wHcAsM-BBac9DHkVf9Y2L9_kYRwOMSx6dzDI84dSEFzB13-8nRkNrFZsBnjS3_cCvzr4nL5qmA3Xttz2gV8yhSIdq9pRE" style=""/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest to-transparent flex flex-col justify-end p-6">
+<span class="text-xs font-bold text-primary tracking-widest uppercase mb-1" style="">Production Status</span>
+<p class="text-sm font-medium text-on-surface leading-tight" style="">Live feed from Line 04 monitored.</p>
+</div>
+</div>
+<div class="bg-tertiary-fixed rounded-xl p-8 flex items-center gap-6">
+<div class="w-16 h-16 rounded-full bg-white flex items-center justify-center text-tertiary shrink-0">
+<span class="material-symbols-outlined text-3xl" data-icon="speed" style="">speed</span>
+</div>
+<div>
+<h4 class="font-headline font-bold text-on-tertiary-fixed" style="">Efficiency Rating</h4>
+<p class="text-xs text-on-tertiary-fixed-variant mb-2" style="">Current production flow is 12% above quarterly target.</p>
+<div class="w-full h-1.5 bg-white/50 rounded-full overflow-hidden">
+<div class="w-[88%] h-full bg-tertiary rounded-full"></div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</body></html>
