@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import datetime as dt
-import traceback
+import logging
 
 from PySide6.QtCore import QEvent, Qt, QDate, QTimer
 from PySide6.QtGui import QFont, QFontMetrics
@@ -31,6 +31,7 @@ from inspection_records_search.services.inspection_service import (
     DEFAULT_KOUTEI_FALLBACK,
     InspectionService,
 )
+from inspection_records_search.shared.errors import describe_exception
 from inspection_records_search.ui.calendar_date_input import DateFieldWidget
 from inspection_records_search.ui.inspector_combo import InspectorComboBox
 from inspection_records_search.ui.koutei_combo import KouteiComboBox
@@ -43,6 +44,9 @@ from inspection_records_search.ui.theme import (
     TEXT_MUTED,
     apply_standard_table_view,
 )
+
+
+_LOG = logging.getLogger(__name__)
 
 
 def _qdate_to_date(qd: QDate) -> dt.date:
@@ -127,8 +131,11 @@ def _confirm_excel_export(parent: QWidget) -> bool:
 
 
 def _show_db_error(parent: QWidget, e: BaseException) -> None:
-    traceback.print_exc()
-    QMessageBox.critical(parent, "データベースエラー", str(e))
+    _LOG.error(
+        "database operation failed",
+        exc_info=(type(e), e, e.__traceback__),
+    )
+    QMessageBox.critical(parent, "データベースエラー", describe_exception(e))
 
 
 # theme の QLabel#sidebarAppTitle 左右 padding（12px + 6px）と一致させること
@@ -258,13 +265,16 @@ class InspectorAggregatePage(QWidget):
                 self, "出力不可", "出力出来るデータがありません。"
             )
             return
-        db_path = self._svc.db_path
         headers = self._model.headers()
         rows = self._model.raw_rows()
 
         def task():
             return export_to_xlsx(
-                db_path, "外観検査集計.xlsx", headers, rows
+                None,
+                "外観検査集計.xlsx",
+                headers,
+                rows,
+                output_dir=self._svc.export_directory,
             )
 
         def on_success(path: object) -> None:
@@ -388,13 +398,16 @@ class LotAggregatePage(QWidget):
                 self, "出力不可", "出力出来るデータがありません。"
             )
             return
-        db_path = self._svc.db_path
         headers = self._model.headers()
         rows = self._model.raw_rows()
 
         def task():
             return export_to_xlsx(
-                db_path, "外観検査ロット別集計.xlsx", headers, rows
+                None,
+                "外観検査ロット別集計.xlsx",
+                headers,
+                rows,
+                output_dir=self._svc.export_directory,
             )
 
         def on_success(path: object) -> None:
@@ -606,7 +619,7 @@ class PersonalInquiryPage(QWidget):
 class MainWindow(QWidget):
     """サイドバー＋メインカード＋3ページ。"""
 
-    def __init__(self, db_path: str, parent=None) -> None:
+    def __init__(self, service: InspectionService, parent=None) -> None:
         super().__init__(parent)
         self.setObjectName("appRoot")
         self.setWindowTitle("外観検査記録照会")
@@ -614,7 +627,7 @@ class MainWindow(QWidget):
         self.resize(1220, 800)
         self.setMinimumSize(800, 560)
 
-        self._svc = InspectionService(db_path)
+        self._svc = service
 
         self._sidebar = QFrame()
         self._sidebar.setObjectName("sidebar")

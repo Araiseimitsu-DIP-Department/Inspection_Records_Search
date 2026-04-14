@@ -26,16 +26,22 @@ def _cell_value(v: Any) -> Any:
 
 
 def export_to_xlsx(
-    db_path: str,
+    db_path: str | None,
     filename: str,
     headers: list[str],
     rows: list[tuple],
+    output_dir: Path | None = None,
 ) -> Path:
     """
-    db_path と同じディレクトリに filename を保存する。
+    output_dir があればそこへ、無ければ db_path と同じディレクトリへ保存する。
     戻り値は保存したパス。
     """
-    out_dir = Path(db_path).resolve().parent
+    if output_dir is not None:
+        out_dir = output_dir
+    elif db_path:
+        out_dir = Path(db_path).resolve().parent
+    else:
+        out_dir = Path.cwd()
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / filename
 
