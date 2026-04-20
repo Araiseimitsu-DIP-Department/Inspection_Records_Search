@@ -1,93 +1,77 @@
-# Inspection_Records_Search（外観検査記録照会）
+# 外観検査記録照会
 
-Microsoft Access（`.accdb` / `.mdb`）の運用データを参照し、**検索・集計表示・Excel エクスポート**を行う Windows 用デスクトップアプリです。  
-業務仕様の参照元は **`docs/VBA.txt`**（既存 Access フォームの SQL・挙動）です。画面のトーンは `docs/DESIGN_*.md` および `docs/code_2.html` を参考にしています。
+Microsoft Access（`.accdb` / `.mdb`）の運用データを参照し、検索・集計表示・Excel 出力を行う Windows 用デスクトップアプリです。
+
+画面は `pywebview`、業務処理は `services/` と `infrastructure/` に分離しています。  
+配布版は onefile の `外観検査記録照会.exe` を想定しています。
 
 ## 主な機能
 
 | 画面 | 内容 |
 |------|------|
-| **検査員別集計** | 表示開始日〜終了日・品番（任意）で `t_外観検査集計` 系 JOIN 明細を表示。Excel 出力：`外観検査集計.xlsx` |
-| **生産ロットID別集計** | `Q_生産ロット集計` を品番・**工程No**（任意）で絞り込み。**工程No** は検査員コンボと同系のプルダウン（DB に候補があれば優先、無ければ既定名称一覧）。DB が番号（例: 16）、表示が名称（例: ゲージ検査）のときも照合できるよう **コード／名称の両方**で条件を組み立てます。Excel 出力：`外観検査ロット別集計.xlsx` |
-| **個人別データ照会** | 検査員（編集・候補絞り込み可）・表示開始日〜終了日で `t_外観検査記録` と `t_外観検査集計` を左右分割表示。工程No **凡例**（15〜24）を表示ボタン付近に1行表示 |
+| 検査員集計 | 表示開始日・表示終了日・品番で明細を検索し、Excel 出力できます。 |
+| ロットID集計 | 品番と工程でロットの集計結果を表示し、Excel 出力できます。 |
+| 検査員別照会 | 検査員と日付範囲で明細と集計を横並び表示します。 |
 
-- **ウィンドウ・タスクバー・アイコン:** `docs/精密部品の品質検査.png`（exe ビルド時に ICO 化して実行ファイルアイコンにも使用）
-- **Excel 保存先:** Access データベースファイルと**同じフォルダ**（VBA 準拠）
-
-## 前提・動作環境
-
-- Windows（64bit）
-- **Microsoft Access Database Engine**（ODBC で `Microsoft Access Driver (*.mdb, *.accdb)` が使えること）
-- 参照する `.accdb` / `.mdb` への読み取り権限（UNC パス可）
-
-## ディレクトリ規約
-
-| 場所 | 役割 |
-|------|------|
-| `main.py` | **起動エントリ**（開発・配布とも） |
-| `build_exe.ps1` | PyInstaller **onefile** ビルド（ICO 生成・リソース同梱） |
-| `requirements.txt` | Python 依存（`pillow` は主に exe 用 ICO 生成） |
-| `.env.example` | 環境変数テンプレート（実値は `.env` へ） |
-| `scripts/generate_app_ico.py` | ビルド時: PNG → `build/app_icon.ico` |
-| `scripts/pyinstaller_build.py` | PyInstaller onefile 実行（`build_exe.ps1` から呼び出し） |
-| `docs/` | 仕様・デザイン参考。**実行時に必須なのはアイコン用 PNG のみ**（ビルドで同梱） |
-| `src/inspection_records_search/` | **アプリパッケージ**（import 名と一致） |
-
-**実装ルール（概要）**
-
-- 業務ロジック・SQL は `services/` に集約。UI からはサービスを呼び、UI に生 SQL を書かない。
-- UI は `ui/`、接続は `infrastructure/`、設定は `config.py`。
-
-## フォルダ構成（抜粋）
+## 現在の構成
 
 ```text
 Inspection_Records_Search/
 ├─ main.py
 ├─ build_exe.ps1
 ├─ requirements.txt
-├─ .env.example
-├─ README.md                 # 本ファイル（ルート）
-├─ scripts/
-│  ├─ generate_app_ico.py    # exe 用 ICO 生成
-│  └─ pyinstaller_build.py   # PyInstaller 実行本体（build_exe.ps1 から実行）
+├─ README.md
 ├─ docs/
-│  ├─ VBA.txt                # 既存フォームの SQL・挙動（正）
-│  ├─ 精密部品の品質検査.png  # アイコン用（ウィンドウ・ビルド同梱）
-│  ├─ code_2.html            # UI イメージ参考
-│  └─ DESIGN_*.md            # デザインシステム参考
+│  ├─ VBA.txt
+│  ├─ code_2.html
+│  ├─ DESIGN_1.md
+│  ├─ DESIGN_2.md
+│  └─ 精密部品の品質検査.png
+├─ scripts/
+│  ├─ generate_app_ico.py
+│  └─ pyinstaller_build.py
 └─ src/inspection_records_search/
-   ├─ app.py                 # QApplication・DB パス検証・テーマ
-   ├─ config.py              # .env・リソースパス（onefile 時 _MEIPASS）
+   ├─ app.py
+   ├─ config.py
+   ├─ webview_app.py
+   ├─ web/
+   │  └─ index.html
+   ├─ application/
+   │  └─ inspection_use_case.py
    ├─ infrastructure/
-   │  └─ access_gateway.py   # pyodbc
+   │  ├─ access_gateway.py
+   │  ├─ postgres_repository.py
+   │  └─ repository_factory.py
    ├─ services/
    │  ├─ inspection_service.py
-   │  └─ export_service.py   # openpyxl
-   └─ ui/
-      ├─ main_window.py       # メインウィンドウ・3画面
-      ├─ theme.py
-      ├─ table_model.py
-      ├─ inspector_combo.py   # 検査員用コンボ
-      ├─ koutei_combo.py    # ロット別 工程No 用コンボ
-      ├─ calendar_date_input.py
-      ├─ processing_dialog.py # バックグラウンド実行＋待機 UI
-      └─ excel_icon.py
+   │  └─ export_service.py
+   ├─ domain/
+   │  ├─ models.py
+   │  └─ repositories.py
+   └─ shared/
+      └─ errors.py
 ```
 
-ビルド実行後に `build/`・`dist/` が生成されます（`.gitignore` 対象）。
+## 処理の流れ
 
-## 設定（`.env`）
+1. `main.py` から `inspection_records_search.app.main()` を起動します。
+2. `config.py` で `.env` を読み、DB 設定を検証します。
+3. `webview_app.py` が Python ブリッジを公開し、画面からの操作を `InspectionService` に渡します。
+4. `web/index.html` が画面本体で、検索条件、一覧、確認ダイアログ、Excel 出力の UI を担います。
+5. `services/` と `infrastructure/` が DB アクセスと Excel 生成を処理します。
+
+## 設定
+
+`.env` で次の変数を使用します。
 
 | 変数 | 説明 |
 |------|------|
-| `ACCESS_DB_PATH` | 参照する Access ファイルの**フルパス**（必須） |
+| `ACCESS_DB_PATH` | Access ファイルのフルパス |
+| `DATABASE_BACKEND` | `access` または `postgres` |
+| `POSTGRES_DSN` | `postgres` を使う場合の接続文字列 |
+| `EXPORT_DIR` | Excel 出力先の任意フォルダ |
 
-1. `.env.example` をコピーして **`.env`** を作成する。
-2. **開発時:** リポジトリルートの `.env` に `ACCESS_DB_PATH` を記載する。
-3. **配布 exe 時:**
-   - ビルド時にプロジェクト直下に `.env` があれば **実行ファイル内に同梱**される（`build_exe.ps1`）。
-   - 読み込み順: **バンドル内 `.env` → 実行ファイルと同じフォルダの `.env`（後者で上書き）**。
-   - 機密を含む場合は配布方法に注意する。
+### Access を使う場合
 
 ```env
 ACCESS_DB_PATH=C:\path\to\外観検査記録照会.accdb
@@ -100,26 +84,30 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
-## 起動（開発）
+## 開発起動
 
 ```powershell
 .\.venv\Scripts\python.exe .\main.py
 ```
 
-## exe ビルド（onefile）
+## onefile ビルド
 
 ```powershell
 .\build_exe.ps1
 ```
 
-同等の処理は **`scripts\pyinstaller_build.py`** でも実行できます（`build_exe.ps1` はこれを呼び出します。日本語パスや PowerShell 5 の文字コード差の回避用）。
+ビルド結果は `dist\外観検査記録照会.exe` のみです。  
+`build\app_icon.ico` と `build/` / `dist/` 配下はビルド途中で生成される中間成果物で、配布対象ではありません。
 
-- 仮想環境 `.venv` が必要です。`pyinstaller`・`pillow` はスクリプト内で導入されます。
-- 成果物: **`dist\外観検査記録照会.exe`**
-- 同梱: `docs\精密部品の品質検査.png`（実行時アイコン用）、（存在すれば）ルートの `.env`
-- 配布時は運用ポリシーに応じて **exe と同じフォルダに `.env`** を置くか、ビルド時同梱を利用してください。
+onefile ビルドのため、配布時に必要なのは EXE 1 ファイルだけです。
 
-## 注意
+## アイコン
 
-- リンクテーブル・権限・ネットワーク経路により、Access / ODBC 側のエラーが返る場合があります。
-- Excel 出力は **openpyxl** による `.xlsx` 生成です（PC に Excel が無くても保存可能）。
+- デスクトップアイコンとタスクバーアイコンの元画像: `docs/精密部品の品質検査.png`
+- ビルド時にこの PNG から Windows 用 `.ico` を生成して exe に埋め込みます。
+
+## 補足
+
+- 現在の画面は `pywebview` の Qt バックエンドを使っています。
+- 配布版は onefile のため、実行時に別途 Python を入れる必要はありません。
+- Access / ODBC の接続可否は利用環境に依存します。

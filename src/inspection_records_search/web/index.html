@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>外観検査記録照会</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f2f5f7;
+      --panel: rgba(255, 255, 255, 0.92);
+      --panel-strong: #ffffff;
+      --line: #d9e1e8;
+      --line-strong: #b9c7d3;
+      --text: #1f2730;
+      --muted: #5b6672;
+      --primary: #0a5bd3;
+      --primary-deep: #083e91;
+      --primary-soft: rgba(10, 91, 211, 0.12);
+      --accent: #0f766e;
+      --warning: #b45309;
+      --danger: #b42318;
+      --shadow: 0 18px 44px rgba(13, 30, 54, 0.12);
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
+      --sidebar-width: 270px;
+      --font: "Segoe UI", "Yu Gothic UI", "Meiryo", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(10, 91, 211, 0.14), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(15, 118, 110, 0.10), transparent 24%),
+        linear-gradient(180deg, #f8fbfd 0%, #eef3f7 100%);
+      overflow: hidden;
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+      height: 100%;
+      min-height: 720px;
+    }
+
+    .sidebar {
+      position: relative;
+      padding: 26px 20px;
+      background:
+        linear-gradient(180deg, rgba(7, 34, 74, 0.97) 0%, rgba(6, 24, 54, 0.98) 100%);
+      color: #eff4fb;
+      box-shadow: inset -1px 0 0 rgba(255,255,255,0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .sidebar::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 16%, rgba(255,255,255,0.14), transparent 28%),
+        radial-gradient(circle at 75% 90%, rgba(58, 123, 213, 0.2), transparent 26%);
+      pointer-events: none;
+    }
+
+    .brand, .nav-group, .sidebar-footer {
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand {
+      padding: 4px 4px 10px;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.12);
+      color: #dcecff;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 30px;
+      line-height: 1.08;
+      letter-spacing: 0.04em;
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: clip;
+    }
+
+    .brand-subtitle {
+      margin: 10px 0 0;
+      color: rgba(233, 241, 251, 0.72);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .nav-group {
+      display: grid;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .nav-btn {
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.05);
+      color: #f2f7ff;
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: transform .18s ease, background .18s ease, border-color .18s ease;
+    }
+
+    .nav-btn:hover {
+      transform: translateY(-1px);
+      background: rgba(255,255,255,0.1);
+    }
+
+    .nav-btn.is-active {
+      background: linear-gradient(135deg, rgba(10, 91, 211, 0.95), rgba(7, 62, 145, 0.96));
+      border-color: rgba(255,255,255,0.18);
+      box-shadow: 0 16px 28px rgba(10, 91, 211, 0.28);
+    }
+
+    .nav-btn .label {
+      display: grid;
+      gap: 3px;
+    }
+
+    .nav-btn .label strong {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .nav-btn .label span {
+      font-size: 12px;
+      color: rgba(235, 243, 255, 0.7);
+    }
+
+    .nav-btn .arrow {
+      opacity: 0.85;
+      font-size: 18px;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 10px;
+      display: grid;
+      gap: 10px;
+      color: rgba(235, 243, 255, 0.72);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .status-chip {
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.1);
+      color: #edf4fb;
+      border: 1px solid rgba(255,255,255,0.10);
+      font-size: 12px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #9bdcff;
+      box-shadow: 0 0 0 4px rgba(155, 220, 255, 0.14);
+    }
+
+    .main {
+      min-width: 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 22px 22px 22px 20px;
+      gap: 16px;
+    }
+
+    .screen {
+      flex: 1;
+      min-height: 0;
+      display: none;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .screen.is-active {
+      display: flex;
+      animation: fadeIn .18s ease;
+    }
+
+    .screen > .result-card {
+      flex: 1;
+      min-height: 0;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(3px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid rgba(185, 199, 211, 0.5);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .card-header {
+      padding: 18px 20px 0;
+    }
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 10px;
+      font-size: 16px;
+      letter-spacing: 0.02em;
+    }
+
+    .card-subtitle {
+      margin: -2px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .card-body {
+      padding: 18px 20px 20px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(0, 0.92fr) minmax(0, 1.18fr) auto;
+      gap: 14px;
+      align-items: end;
+    }
+
+    .grid-3-inline {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: end;
+    }
+
+    .grid-4-inline {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.9fr) minmax(0, 0.9fr) auto;
+      gap: 14px;
+      align-items: end;
+    }
+
+    .grid-4 .field input[type="date"] {
+      max-width: 100%;
+    }
+
+    .grid-4 .actions {
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      align-self: end;
+      padding-bottom: 2px;
+    }
+
+    .grid-3-inline .actions,
+    .grid-4-inline .actions {
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      align-self: end;
+      padding-bottom: 2px;
+    }
+
+    .grid-4-inline .field.compact {
+      align-self: start;
+    }
+
+    .grid-4-inline .field.compact input {
+      height: 46px;
+      min-height: 46px;
+      line-height: 1.2;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    .grid-4-inline .field.compact .hint {
+      margin-top: 2px;
+    }
+
+    .personal-filter {
+      display: grid;
+      gap: 8px;
+    }
+
+    .personal-filter-labels,
+    .personal-filter-inputs {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.9fr) minmax(0, 0.9fr) auto;
+      gap: 14px;
+      align-items: end;
+    }
+
+    .personal-filter-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding-left: 2px;
+    }
+
+    .personal-filter-spacer {
+      min-height: 1px;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: var(--panel-strong);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 12px 14px;
+      min-height: 46px;
+      outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: rgba(10, 91, 211, 0.45);
+      box-shadow: 0 0 0 4px rgba(10, 91, 211, 0.12);
+    }
+
+    .field .hint {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 12px;
+      padding: 12px 16px;
+      min-height: 44px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-deep));
+      color: white;
+      box-shadow: 0 12px 24px rgba(10, 91, 211, 0.22);
+    }
+
+    .btn.secondary {
+      background: #eef3f8;
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    .btn.ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--line);
+    }
+
+    .btn.danger {
+      background: linear-gradient(135deg, #d92d20, #b42318);
+      color: white;
+      box-shadow: 0 12px 24px rgba(180, 35, 24, 0.16);
+    }
+
+    .results {
+      min-height: 0;
+      display: grid;
+      gap: 14px;
+      flex: 1;
+    }
+
+    .results.split {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      min-height: 0;
+    }
+
+    .result-card {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    .result-head {
+      padding: 16px 18px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .result-title {
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .result-meta {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .table-wrap {
+      padding: 14px 18px 18px;
+      overflow: auto;
+      min-height: 0;
+      flex: 1;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      background: #f5f8fb;
+      color: #3b4754;
+      font-size: 12px;
+      text-align: left;
+      padding: 12px 12px;
+      border-bottom: 1px solid var(--line);
+      white-space: nowrap;
+      z-index: 1;
+    }
+
+    tbody td {
+      padding: 11px 12px;
+      font-size: 13px;
+      border-bottom: 1px solid #edf1f5;
+      white-space: nowrap;
+    }
+
+    tbody tr:nth-child(even) td {
+      background: #fbfcfd;
+    }
+
+    tbody tr:hover td {
+      background: #eef5ff;
+    }
+
+    .align-right { text-align: right; }
+    .align-center { text-align: center; }
+    .empty {
+      padding: 32px 14px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .legend span {
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: #eef4ff;
+      color: #2757aa;
+      border: 1px solid rgba(39, 87, 170, 0.14);
+      font-size: 12px;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(14, 20, 28, 0.36);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 24px;
+    }
+
+    .overlay.is-open {
+      display: flex;
+    }
+
+    .dialog {
+      width: min(560px, 100%);
+      background: rgba(255,255,255,0.98);
+      border-radius: 22px;
+      border: 1px solid rgba(188, 201, 214, 0.7);
+      box-shadow: 0 28px 68px rgba(13, 30, 54, 0.28);
+      padding: 20px;
+    }
+
+    .dialog h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .dialog p {
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+
+    .dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .busy {
+      display: grid;
+      justify-items: center;
+      gap: 12px;
+      color: white;
+      text-align: center;
+    }
+
+    .spinner {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: 5px solid rgba(255,255,255,0.24);
+      border-top-color: white;
+      animation: spin .8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .toast-stack {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      display: grid;
+      gap: 10px;
+      z-index: 2500;
+      width: min(420px, calc(100vw - 36px));
+    }
+
+    .toast {
+      padding: 14px 16px;
+      border-radius: 16px;
+      color: white;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+      animation: toastIn .2s ease;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .toast.info { background: rgba(10, 91, 211, 0.96); }
+    .toast.success { background: rgba(15, 118, 110, 0.96); }
+    .toast.warning { background: rgba(180, 83, 9, 0.96); }
+    .toast.error { background: rgba(180, 35, 24, 0.96); }
+
+    .toast strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 13px;
+    }
+
+    .toast span {
+      display: block;
+      font-size: 12px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+    }
+
+    @keyframes toastIn {
+      from { transform: translateY(10px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .error-banner {
+      border: 1px solid rgba(180, 35, 24, 0.18);
+      background: linear-gradient(180deg, rgba(255, 244, 243, 0.98), rgba(255, 251, 250, 0.98));
+      color: #7a1d15;
+      border-radius: 18px;
+      padding: 16px 18px;
+      line-height: 1.7;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    @media (max-width: 1180px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+        overflow: auto;
+      }
+      body {
+        overflow: auto;
+      }
+      .sidebar {
+        border-radius: 0 0 26px 26px;
+      }
+      .main {
+        padding-top: 16px;
+      }
+      .results.split,
+      .grid-2,
+      .grid-3,
+      .grid-4,
+      .grid-3-inline,
+      .grid-4-inline,
+      .personal-filter-labels,
+      .personal-filter-inputs {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">Inspection Records Search</div>
+        <h1 class="brand-title">外観検査記録照会</h1>
+        <p class="brand-subtitle">検査員別の記録、ロットID別の集計、外観検査の一覧検索をまとめて扱う業務画面です。</p>
+      </div>
+
+      <div class="nav-group" role="tablist" aria-label="画面切替">
+        <button class="nav-btn is-active" data-page="main" type="button">
+          <span class="label">
+            <strong>検査員集計</strong>
+            <span>日付と品番で明細を検索</span>
+          </span>
+          <span class="arrow">›</span>
+        </button>
+        <button class="nav-btn" data-page="lot" type="button">
+          <span class="label">
+            <strong>ロットID集計</strong>
+            <span>工程別のロット一覧</span>
+          </span>
+          <span class="arrow">›</span>
+        </button>
+        <button class="nav-btn" data-page="personal" type="button">
+          <span class="label">
+            <strong>検査員別照会</strong>
+            <span>個人の実績と集計を表示</span>
+          </span>
+          <span class="arrow">›</span>
+        </button>
+      </div>
+
+      <div class="sidebar-footer">
+        <div id="connectionStatus" class="status-chip">
+          <span class="status-dot"></span>
+          <span>読み込み中</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="screen is-active" id="screen-main" aria-labelledby="mainTitle">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title" id="mainTitle">検査員集計</h2>
+            <p class="card-subtitle">検索開始日・検索終了日・品番で外観検査の明細を絞り込みます。</p>
+          </div>
+          <div class="card-body">
+            <div class="grid-4">
+              <div class="field compact">
+                <label for="mainDateFrom">検索開始日</label>
+                <input id="mainDateFrom" type="date">
+              </div>
+              <div class="field compact">
+                <label for="mainDateTo">検索終了日</label>
+                <input id="mainDateTo" type="date">
+              </div>
+              <div class="field">
+                <label for="mainPartNumber">品番</label>
+                <input id="mainPartNumber" type="text" placeholder="任意">
+              </div>
+              <div class="actions">
+                <button class="btn primary" id="mainSearchBtn" type="button">表示</button>
+                <button class="btn secondary" id="mainExportBtn" type="button">Excel 出力</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card result-card">
+          <div class="result-head">
+            <div>
+              <h3 class="result-title">検索結果</h3>
+              <div class="result-meta" id="mainMeta">未検索</div>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <div id="mainTable"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" id="screen-lot" aria-labelledby="lotTitle">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title" id="lotTitle">ロットID集計</h2>
+            <p class="card-subtitle">品番と工程でロットの集計結果を表示します。</p>
+          </div>
+          <div class="card-body">
+            <div class="grid-3-inline">
+              <div class="field">
+                <label for="lotPartNumber">品番</label>
+                <input id="lotPartNumber" type="text" placeholder="任意">
+              </div>
+              <div class="field">
+                <label for="lotKoutei">工程</label>
+                <input id="lotKoutei" type="text" list="kouteiOptions" placeholder="候補から選択">
+                <datalist id="kouteiOptions"></datalist>
+              </div>
+              <div class="actions">
+                <button class="btn primary" id="lotSearchBtn" type="button">表示</button>
+                <button class="btn secondary" id="lotExportBtn" type="button">Excel 出力</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card result-card">
+          <div class="result-head">
+            <div>
+              <h3 class="result-title">検索結果</h3>
+              <div class="result-meta" id="lotMeta">未検索</div>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <div id="lotTable"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" id="screen-personal" aria-labelledby="personalTitle">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title" id="personalTitle">検査員別照会</h2>
+            <p class="card-subtitle">検査員を選択して、期間内の明細と集計を横並びで確認します。</p>
+          </div>
+          <div class="card-body">
+            <div class="personal-filter">
+              <div class="personal-filter-labels">
+                <div class="personal-filter-label">検査員</div>
+                <div class="personal-filter-label">検索開始日</div>
+                <div class="personal-filter-label">検索終了日</div>
+                <div class="personal-filter-spacer" aria-hidden="true"></div>
+              </div>
+              <div class="personal-filter-inputs">
+                <div class="field compact">
+                  <input id="inspectorInput" type="text" list="inspectorOptions" placeholder="ID または氏名で検索">
+                  <datalist id="inspectorOptions"></datalist>
+                </div>
+                <div class="field">
+                  <input id="personalDateFrom" type="date">
+                </div>
+                <div class="field">
+                  <input id="personalDateTo" type="date">
+                </div>
+                <div class="actions">
+                  <button class="btn primary" id="personalSearchBtn" type="button">表示</button>
+                </div>
+              </div>
+            </div>
+            <div class="card" style="padding: 14px 16px;">
+              <div class="card-title" style="margin-bottom: 8px;">工程凡例</div>
+              <div class="legend" id="kouteiLegend"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="results split">
+          <div class="card result-card">
+            <div class="result-head">
+              <div>
+                <h3 class="result-title">検査員別明細</h3>
+                <div class="result-meta" id="personalRecordsMeta">未検索</div>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <div id="personalRecordsTable"></div>
+            </div>
+          </div>
+
+          <div class="card result-card">
+            <div class="result-head">
+              <div>
+                <h3 class="result-title">検査員別集計</h3>
+                <div class="result-meta" id="personalSummaryMeta">未検索</div>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <div id="personalSummaryTable"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="overlay" id="busyOverlay" aria-hidden="true">
+    <div class="busy">
+      <div class="spinner"></div>
+      <div id="busyLabel">処理中...</div>
+    </div>
+  </div>
+
+  <div class="overlay" id="modalOverlay" aria-hidden="true">
+    <div class="dialog">
+      <h2 id="modalTitle">確認</h2>
+      <p id="modalMessage"></p>
+      <div class="dialog-actions" id="modalActions"></div>
+    </div>
+  </div>
+
+  <div class="toast-stack" id="toastStack"></div>
+
+  <script>
+    const state = {
+      activePage: "main",
+      today: "",
+      startupError: null,
+      inspectors: [],
+      inspectorLookup: new Map(),
+      kouteiOptions: [],
+      kouteiPairs: [],
+      resultData: {
+        main: null,
+        lot: null,
+        personalRecords: null,
+        personalSummary: null,
+      },
+    };
+
+    const dom = {};
+    let modalResolver = null;
+
+    function $(id) {
+      return document.getElementById(id);
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll("\"", "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function setBusy(open, label = "処理中...") {
+      dom.busyLabel.textContent = label;
+      dom.busyOverlay.classList.toggle("is-open", Boolean(open));
+      dom.busyOverlay.setAttribute("aria-hidden", String(!open));
+    }
+
+    function setStatus(text, kind = "ok") {
+      dom.connectionStatus.querySelector("span:last-child").textContent = text;
+      dom.connectionStatus.style.opacity = kind === "error" ? "0.98" : "1";
+      dom.connectionStatus.style.background = kind === "error"
+        ? "rgba(180,35,24,0.18)"
+        : "rgba(255,255,255,0.1)";
+    }
+
+    function toast(title, message, kind = "info", timeout = 3200) {
+      const el = document.createElement("div");
+      el.className = `toast ${kind}`;
+      el.innerHTML = `<strong>${escapeHtml(title)}</strong><span>${escapeHtml(message)}</span>`;
+      dom.toastStack.appendChild(el);
+      window.setTimeout(() => {
+        el.style.opacity = "0";
+        el.style.transform = "translateY(6px)";
+        el.style.transition = "opacity .18s ease, transform .18s ease";
+        window.setTimeout(() => el.remove(), 180);
+      }, timeout);
+    }
+
+    function openModal({ title, message, actions }) {
+      dom.modalTitle.textContent = title;
+      dom.modalMessage.textContent = message;
+      dom.modalActions.innerHTML = "";
+      actions.forEach(action => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = `btn ${action.kind || "secondary"}`;
+        btn.textContent = action.label;
+        btn.addEventListener("click", () => {
+          if (typeof action.onClick === "function") {
+            action.onClick();
+          }
+        });
+        dom.modalActions.appendChild(btn);
+      });
+      dom.modalOverlay.classList.add("is-open");
+      dom.modalOverlay.setAttribute("aria-hidden", "false");
+    }
+
+    function closeModal(result = false) {
+      dom.modalOverlay.classList.remove("is-open");
+      dom.modalOverlay.setAttribute("aria-hidden", "true");
+      if (modalResolver) {
+        const resolve = modalResolver;
+        modalResolver = null;
+        resolve(result);
+      }
+    }
+
+    function confirmDialog(title, message) {
+      return new Promise(resolve => {
+        modalResolver = resolve;
+        openModal({
+          title,
+          message,
+          actions: [
+            { label: "キャンセル", kind: "ghost", onClick: () => closeModal(false) },
+            { label: "続行", kind: "primary", onClick: () => closeModal(true) },
+          ],
+        });
+      });
+    }
+
+    async function callApi(name, ...args) {
+      if (!window.pywebview || !window.pywebview.api || typeof window.pywebview.api[name] !== "function") {
+        throw new Error("pywebview API が初期化されていません。");
+      }
+      const result = await window.pywebview.api[name](...args);
+      if (!result || result.ok !== true) {
+        throw new Error((result && result.error) || "処理に失敗しました。");
+      }
+      return result;
+    }
+
+    function setPage(page) {
+      state.activePage = page;
+      document.querySelectorAll(".nav-btn").forEach(btn => {
+        btn.classList.toggle("is-active", btn.dataset.page === page);
+      });
+      document.querySelectorAll(".screen").forEach(screen => {
+        screen.classList.toggle("is-active", screen.id === `screen-${page}`);
+      });
+    }
+
+    function normalizeText(value) {
+      return String(value || "").trim().toLowerCase();
+    }
+
+    function populateDatalist(node, values, valueGetter = item => item) {
+      node.innerHTML = "";
+      const fragment = document.createDocumentFragment();
+      values.forEach(item => {
+        const option = document.createElement("option");
+        option.value = valueGetter(item);
+        fragment.appendChild(option);
+      });
+      node.appendChild(fragment);
+    }
+
+    function initLookupMaps() {
+      state.inspectorLookup = new Map();
+      state.inspectors.forEach(item => {
+        state.inspectorLookup.set(normalizeText(item.label), item.id);
+        state.inspectorLookup.set(normalizeText(item.id), item.id);
+        if (item.name) {
+          state.inspectorLookup.set(normalizeText(`${item.id} ${item.name}`), item.id);
+          state.inspectorLookup.set(normalizeText(item.name), item.id);
+        }
+      });
+    }
+
+    function resolveInspectorId(text) {
+      const raw = String(text || "").trim();
+      if (!raw) return "";
+      const direct = state.inspectorLookup.get(normalizeText(raw));
+      if (direct) return direct;
+
+      const partialMatches = state.inspectors.filter(item => {
+        const hay = normalizeText(item.label);
+        return hay.includes(normalizeText(raw));
+      });
+      if (partialMatches.length === 1) {
+        return partialMatches[0].id;
+      }
+      return raw;
+    }
+
+    function valueKind(cell) {
+      return cell && typeof cell === "object" ? cell.kind : "text";
+    }
+
+    function valueDisplay(cell) {
+      if (cell && typeof cell === "object") {
+        return cell.display ?? "";
+      }
+      return cell ?? "";
+    }
+
+    function alignClass(headers, cell, header, columnIndex) {
+      const kind = valueKind(cell);
+      if (kind === "int" || kind === "float" || kind === "decimal") {
+        return "align-right";
+      }
+      if (kind === "date" || kind === "datetime" || kind === "time") {
+        return "align-center";
+      }
+      if (typeof header === "string" && /ID|No|No\.|数量|時間|日付|日/.test(header)) {
+        if (kind === "text" || kind === "bool") {
+          return "align-center";
+        }
+      }
+      return "";
+    }
+
+    function renderTable(container, table, emptyLabel = "データがありません") {
+      container.innerHTML = "";
+      if (!table || !Array.isArray(table.headers) || table.headers.length === 0) {
+        container.innerHTML = `<div class="empty">${escapeHtml(emptyLabel)}</div>`;
+        return;
+      }
+
+      const hidden = new Set(table.hidden_columns || []);
+      const visibleHeaders = table.headers
+        .map((header, index) => ({ header, index }))
+        .filter(item => !hidden.has(item.index));
+
+      if (visibleHeaders.length === 0) {
+        container.innerHTML = `<div class="empty">${escapeHtml(emptyLabel)}</div>`;
+        return;
+      }
+
+      const tableEl = document.createElement("table");
+      const thead = document.createElement("thead");
+      const headRow = document.createElement("tr");
+      visibleHeaders.forEach(item => {
+        const th = document.createElement("th");
+        th.textContent = item.header;
+        if (/ID|No|No\.|数量|時間|日付|日/.test(item.header)) {
+          th.classList.add("align-center");
+        }
+        headRow.appendChild(th);
+      });
+      thead.appendChild(headRow);
+
+      const tbody = document.createElement("tbody");
+      const rows = Array.isArray(table.rows) ? table.rows : [];
+      const fragment = document.createDocumentFragment();
+      if (rows.length === 0) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = visibleHeaders.length;
+        td.className = "empty";
+        td.textContent = emptyLabel;
+        tr.appendChild(td);
+        fragment.appendChild(tr);
+      } else {
+        rows.forEach(row => {
+          const tr = document.createElement("tr");
+          visibleHeaders.forEach(({ header, index }) => {
+            const td = document.createElement("td");
+            const cell = row[index];
+            td.textContent = valueDisplay(cell);
+            const cls = alignClass(table.headers, cell, header, index);
+            if (cls) td.classList.add(cls);
+            tr.appendChild(td);
+          });
+          fragment.appendChild(tr);
+        });
+      }
+
+      tbody.appendChild(fragment);
+      tableEl.appendChild(thead);
+      tableEl.appendChild(tbody);
+      container.appendChild(tableEl);
+    }
+
+    function setMainResult(table) {
+      state.resultData.main = table;
+      renderTable(dom.mainTable, table);
+      dom.mainMeta.textContent = table && Array.isArray(table.rows)
+        ? `${table.rows.length} 件`
+        : "未検索";
+    }
+
+    function setLotResult(table) {
+      state.resultData.lot = table;
+      renderTable(dom.lotTable, table);
+      dom.lotMeta.textContent = table && Array.isArray(table.rows)
+        ? `${table.rows.length} 件`
+        : "未検索";
+    }
+
+    function setPersonalResults(records, summary) {
+      state.resultData.personalRecords = records;
+      state.resultData.personalSummary = summary;
+      renderTable(dom.personalRecordsTable, records);
+      renderTable(dom.personalSummaryTable, summary);
+      dom.personalRecordsMeta.textContent = records && Array.isArray(records.rows)
+        ? `${records.rows.length} 件`
+        : "未検索";
+      dom.personalSummaryMeta.textContent = summary && Array.isArray(summary.rows)
+        ? `${summary.rows.length} 件`
+        : "未検索";
+    }
+
+    function showConfigurationError(message) {
+      dom.connectionStatus.querySelector("span:last-child").textContent = "設定エラー";
+      dom.statusLabel.textContent = "設定エラー";
+      const mainCard = document.querySelector("#screen-main .card");
+      const banner = document.createElement("div");
+      banner.className = "error-banner";
+      banner.innerHTML = `<strong>起動時設定エラー</strong><br>${escapeHtml(message).replaceAll("\n", "<br>")}`;
+      mainCard.parentElement.insertBefore(banner, mainCard);
+    }
+
+    function initializeStaticUi() {
+      fitSidebarTitle();
+      dom.mainDateFrom.value = state.today;
+      dom.mainDateTo.value = state.today;
+      dom.personalDateFrom.value = state.today;
+      dom.personalDateTo.value = state.today;
+      renderTable(dom.mainTable, null);
+      renderTable(dom.lotTable, null);
+      renderTable(dom.personalRecordsTable, null);
+      renderTable(dom.personalSummaryTable, null);
+      populateDatalist(dom.inspectorOptions, state.inspectors, item => item.label);
+      populateDatalist(dom.kouteiOptions, state.kouteiOptions, item => item);
+      dom.kouteiLegend.innerHTML = "";
+      const legendItems = state.kouteiPairs.length ? state.kouteiPairs : state.kouteiOptions.map(value => ({ label: value }));
+      const legendFragment = document.createDocumentFragment();
+      legendItems.forEach(item => {
+        const span = document.createElement("span");
+        span.textContent = item.label || item.name || "";
+        legendFragment.appendChild(span);
+      });
+      dom.kouteiLegend.appendChild(legendFragment);
+      initLookupMaps();
+    }
+
+    async function bootstrap() {
+      setBusy(true, "起動中...");
+      try {
+        const result = await callApi("bootstrap");
+        const payload = result;
+        state.today = payload.today || "";
+        state.startupError = payload.startup_error || null;
+        state.inspectors = Array.isArray(payload.inspectors) ? payload.inspectors : [];
+        state.kouteiOptions = Array.isArray(payload.koutei_options) ? payload.koutei_options : [];
+        state.kouteiPairs = Array.isArray(payload.koutei_pairs) ? payload.koutei_pairs : [];
+        initializeStaticUi();
+        if (state.startupError) {
+          setStatus("設定エラー", "error");
+          showConfigurationError(state.startupError);
+          toast("設定エラー", state.startupError, "error", 6000);
+        } else {
+          setStatus("準備完了", "ok");
+          toast("準備完了", "アプリを起動しました。", "success", 2200);
+        }
+      } catch (err) {
+        setStatus("エラー", "error");
+        showConfigurationError(err.message || String(err));
+        toast("起動失敗", err.message || String(err), "error", 7000);
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    async function runMainSearch() {
+      const dateFrom = dom.mainDateFrom.value;
+      const dateTo = dom.mainDateTo.value;
+      const partNumber = dom.mainPartNumber.value.trim();
+      if (!dateFrom || !dateTo) {
+        toast("入力不足", "検索開始日と検索終了日を指定してください。", "warning");
+        return;
+      }
+      if (dateFrom > dateTo) {
+        toast("入力エラー", "検索開始日が検索終了日より後になっています。", "warning");
+        return;
+      }
+      setBusy(true, "検索中...");
+      try {
+        const result = await callApi("search_main_detail", dateFrom, dateTo, partNumber || null);
+        setMainResult(result.table);
+        toast("検索完了", "検査員集計を更新しました。", "success", 2000);
+      } catch (err) {
+        toast("検索失敗", err.message || String(err), "error", 5500);
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    async function runLotSearch() {
+      const partNumber = dom.lotPartNumber.value.trim();
+      const koutei = dom.lotKoutei.value.trim();
+      setBusy(true, "検索中...");
+      try {
+        const result = await callApi("search_lot_aggregate", partNumber || null, koutei || null);
+        setLotResult(result.table);
+        toast("検索完了", "ロットID集計を更新しました。", "success", 2000);
+      } catch (err) {
+        toast("検索失敗", err.message || String(err), "error", 5500);
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    async function runPersonalSearch() {
+      const inspectorId = resolveInspectorId(dom.inspectorInput.value);
+      const dateFrom = dom.personalDateFrom.value;
+      const dateTo = dom.personalDateTo.value;
+      if (!inspectorId) {
+        toast("入力不足", "検査員を選択してください。", "warning");
+        return;
+      }
+      if (!dateFrom || !dateTo) {
+        toast("入力不足", "検索開始日と検索終了日を指定してください。", "warning");
+        return;
+      }
+      if (dateFrom > dateTo) {
+        toast("入力エラー", "検索開始日が検索終了日より後になっています。", "warning");
+        return;
+      }
+      setBusy(true, "検索中...");
+      try {
+        const result = await callApi("search_personal_inquiry", inspectorId, dateFrom, dateTo);
+        setPersonalResults(result.records, result.summary);
+        toast("検索完了", "検査員別照会を更新しました。", "success", 2000);
+      } catch (err) {
+        toast("検索失敗", err.message || String(err), "error", 5500);
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    async function exportTable(table, filename, title) {
+      if (!table || !Array.isArray(table.headers) || table.headers.length === 0) {
+        toast("出力不可", "出力対象のデータがありません。", "warning");
+        return;
+      }
+      const confirmed = await confirmDialog("Excel 出力", `${title} を Excel に出力します。`);
+      if (!confirmed) {
+        return;
+      }
+      setBusy(true, "Excel を出力中...");
+      try {
+        const result = await callApi("export_table", filename, table.headers, table.rows);
+        toast("出力完了", `保存しました。\n${result.path}`, "success", 4200);
+      } catch (err) {
+        toast("出力失敗", err.message || String(err), "error", 6500);
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    function wireEvents() {
+      document.querySelectorAll(".nav-btn").forEach(btn => {
+        btn.addEventListener("click", () => setPage(btn.dataset.page));
+      });
+
+      dom.mainSearchBtn.addEventListener("click", runMainSearch);
+      dom.lotSearchBtn.addEventListener("click", runLotSearch);
+      dom.personalSearchBtn.addEventListener("click", runPersonalSearch);
+
+      dom.mainExportBtn.addEventListener("click", () => {
+        exportTable(state.resultData.main, "外観検査記録照会_検査員集計.xlsx", "検査員集計");
+      });
+      dom.lotExportBtn.addEventListener("click", () => {
+        exportTable(state.resultData.lot, "外観検査記録照会_ロットID集計.xlsx", "ロットID集計");
+      });
+
+      dom.modalOverlay.addEventListener("click", event => {
+        if (event.target === dom.modalOverlay) {
+          closeModal(false);
+        }
+      });
+
+      document.addEventListener("keydown", event => {
+        if (event.key === "Escape") {
+          closeModal(false);
+        }
+      });
+
+      window.addEventListener("resize", fitSidebarTitle);
+    }
+
+    function fitSidebarTitle() {
+      const title = document.querySelector(".brand-title");
+      if (!title) return;
+      const minSize = 16;
+      const maxSize = 30;
+      let size = maxSize;
+      title.style.fontSize = `${size}px`;
+      while (size > minSize && title.scrollWidth > title.clientWidth) {
+        size -= 1;
+        title.style.fontSize = `${size}px`;
+      }
+    }
+
+    function bindDom() {
+      dom.connectionStatus = $("connectionStatus");
+      dom.mainDateFrom = $("mainDateFrom");
+      dom.mainDateTo = $("mainDateTo");
+      dom.mainPartNumber = $("mainPartNumber");
+      dom.mainSearchBtn = $("mainSearchBtn");
+      dom.mainExportBtn = $("mainExportBtn");
+      dom.mainTable = $("mainTable");
+      dom.mainMeta = $("mainMeta");
+      dom.lotPartNumber = $("lotPartNumber");
+      dom.lotKoutei = $("lotKoutei");
+      dom.lotSearchBtn = $("lotSearchBtn");
+      dom.lotExportBtn = $("lotExportBtn");
+      dom.lotTable = $("lotTable");
+      dom.lotMeta = $("lotMeta");
+      dom.inspectorInput = $("inspectorInput");
+      dom.personalDateFrom = $("personalDateFrom");
+      dom.personalDateTo = $("personalDateTo");
+      dom.personalSearchBtn = $("personalSearchBtn");
+      dom.personalRecordsTable = $("personalRecordsTable");
+      dom.personalSummaryTable = $("personalSummaryTable");
+      dom.personalRecordsMeta = $("personalRecordsMeta");
+      dom.personalSummaryMeta = $("personalSummaryMeta");
+      dom.kouteiOptions = $("kouteiOptions");
+      dom.inspectorOptions = $("inspectorOptions");
+      dom.kouteiLegend = $("kouteiLegend");
+      dom.busyOverlay = $("busyOverlay");
+      dom.busyLabel = $("busyLabel");
+      dom.modalOverlay = $("modalOverlay");
+      dom.modalTitle = $("modalTitle");
+      dom.modalMessage = $("modalMessage");
+      dom.modalActions = $("modalActions");
+      dom.toastStack = $("toastStack");
+    }
+
+    bindDom();
+    wireEvents();
+
+    window.addEventListener("pywebviewready", bootstrap);
+    if (window.pywebview && window.pywebview.api) {
+      bootstrap();
+    }
+  </script>
+</body>
+</html>

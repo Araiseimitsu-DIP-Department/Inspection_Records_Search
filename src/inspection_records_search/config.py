@@ -1,4 +1,4 @@
-"""アプリ設定の読み込み（.env は exe / プロジェクト直下）。"""
+"""Application settings and resource path helpers."""
 
 from __future__ import annotations
 
@@ -10,96 +10,105 @@ from dotenv import load_dotenv
 
 
 def get_application_base_dir() -> Path:
-    """配布 exe 時は exe 所在フォルダ、開発時はリポジトリルート。"""
+    """Return the application base directory.
+
+    In a frozen executable this is the folder containing the exe.
+    During development this is the project root.
+    """
     if getattr(sys, "frozen", False):
         return Path(sys.executable).resolve().parent
     return Path(__file__).resolve().parent.parent.parent
 
 
 def resource_path(*parts: str) -> Path:
-    """PyInstaller onefile 時は展開先、開発時はリポジトリルート基準。"""
+    """Return a path that works both in development and in a frozen app."""
     if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
         return Path(sys._MEIPASS).joinpath(*parts)
     return get_application_base_dir().joinpath(*parts)
 
 
 def get_window_icon_png_path() -> Path | None:
-    """ウィンドウ・タスクバー用アイコン。"""
-    p = resource_path("docs", "精密部品の品質検査.png")
-    if p.is_file():
-        return p
-    return None
+    """Return the PNG used for the window and taskbar icon."""
+    path = resource_path("docs", "精密部品の品質検査.png")
+    return path if path.is_file() else None
+
+
+def get_web_index_html_path() -> Path:
+    """Return the bundled frontend entry point."""
+    return resource_path("src", "inspection_records_search", "web", "index.html")
 
 
 def load_env() -> None:
-    """バンドル内 .env を先に読み、exe 隣の .env で上書き可能。"""
+    """Load .env from both the bundled app and the current working tree."""
     if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
         bundled = Path(sys._MEIPASS) / ".env"
         if bundled.is_file():
             load_dotenv(bundled, override=False)
+
     env_path = get_application_base_dir() / ".env"
     if env_path.is_file():
         load_dotenv(env_path, override=True)
 
 
 def get_access_db_path() -> str:
-    """Access DB のフルパス（既定 backend 用）。"""
+    """Return the Access database path from .env."""
     load_env()
     return (os.getenv("ACCESS_DB_PATH") or "").strip().strip('"')
 
 
 def get_database_backend() -> str:
-    """使用する DB backend。既定は access。"""
+    """Return the configured database backend."""
     load_env()
     return (os.getenv("DATABASE_BACKEND") or "access").strip().lower()
 
 
 def get_postgres_dsn() -> str:
-    """将来の PostgreSQL 用 DSN / 接続文字列。"""
+    """Return the PostgreSQL DSN from .env."""
     load_env()
     return (os.getenv("POSTGRES_DSN") or "").strip().strip('"')
 
 
 def get_export_dir() -> str:
-    """Excel 出力先の明示指定。未指定なら backend ごとの既定値を使う。"""
+    """Return the Excel export directory from .env."""
     load_env()
     return (os.getenv("EXPORT_DIR") or "").strip().strip('"')
 
 
 def validate_access_db_path(path: str) -> tuple[bool, str]:
-    """存在確認（UNC パス可）。"""
+    """Validate the Access database path."""
     if not path:
-        return False, "ACCESS_DB_PATH が .env に設定されていません。"
+        return False, "ACCESS_DB_PATH is not set in .env."
+
     p = Path(path)
     try:
         if not p.is_file():
-            return False, f"データベースファイルが見つかりません:\n{path}"
-    except OSError as e:
-        return False, f"データベースファイルを確認できません:\n{path}\n{e}"
+            return False, f"Database file not found:\n{path}"
+    except OSError as exc:
+        return False, f"Could not inspect the database file:\n{path}\n{exc}"
+
     if p.suffix.lower() not in (".accdb", ".mdb"):
-        return False, ".accdb または .mdb を指定してください。"
+        return False, "Please specify a .accdb or .mdb file."
+
     return True, ""
 
 
 def validate_database_settings() -> tuple[bool, str]:
+    """Validate the configured database connection settings."""
     backend = get_database_backend()
     if backend == "access":
         return validate_access_db_path(get_access_db_path())
     if backend == "postgres":
         dsn = get_postgres_dsn()
         if not dsn:
-            return (
-                False,
-                "DATABASE_BACKEND=postgres の場合、POSTGRES_DSN を設定してください。",
-            )
+            return False, "Set POSTGRES_DSN when DATABASE_BACKEND=postgres."
         return True, ""
-    return False, f"DATABASE_BACKEND の値が不正です: {backend}"
+    return False, f"Invalid DATABASE_BACKEND value: {backend}"
 
 
 def resolve_export_dir(default_dir: Path) -> Path:
-    """EXPORT_DIR があればそれを使い、無ければ既定ディレクトリ。"""
+    """Return the export directory or a fallback directory."""
     raw = get_export_dir()
     if raw:
-        p = Path(raw)
-        return p if p.is_absolute() else default_dir / p
+        path = Path(raw)
+        return path if path.is_absolute() else default_dir / path
     return default_dir

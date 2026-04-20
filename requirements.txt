@@ -1,6 +1,6 @@
-PySide6>=6.6.0
+pywebview[qt]>=6.2.1
+PyQt6-WebEngine>=6.9.0
 pyodbc>=5.0.0
 python-dotenv>=1.0.0
 openpyxl>=3.1.0
-# exe ビルド時の PNG→ICO 変換（build_exe.ps1 / scripts/generate_app_ico.py）。アプリ本体の実行には不要。
 pillow>=10.0.0

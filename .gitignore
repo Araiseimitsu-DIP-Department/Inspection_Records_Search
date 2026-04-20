@@ -46,6 +46,10 @@ coverage.xml
 build/
 dist/
 *.spec
+*.exe
+*.manifest
+*.pdb
+build/app_icon.ico
 
 # === Python パッケージング（ setuptools 等） ===
 *.egg-info/

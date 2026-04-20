@@ -1,4 +1,4 @@
-"""onefile exe ビルド（PyInstaller）。日本語パス対策で Python から起動する。"""
+"""Build the onefile Windows executable."""
 
 from __future__ import annotations
 
@@ -11,43 +11,46 @@ def main() -> int:
     root = Path(__file__).resolve().parent.parent
     py = root / ".venv" / "Scripts" / "python.exe"
     if not py.is_file():
-        print("エラー: .venv が見つかりません。", file=sys.stderr)
+        print("Error: .venv was not found.", file=sys.stderr)
         return 1
 
     png = root / "docs" / "精密部品の品質検査.png"
     if not png.is_file():
-        print(f"エラー: PNG がありません: {png}", file=sys.stderr)
+        print(f"Error: PNG not found: {png}", file=sys.stderr)
         return 1
 
     def run(args: list[str | Path]) -> None:
-        r = subprocess.run(
+        result = subprocess.run(
             [str(a) for a in args],
             cwd=str(root),
             check=False,
         )
-        if r.returncode != 0:
-            raise SystemExit(r.returncode)
+        if result.returncode != 0:
+            raise SystemExit(result.returncode)
 
-    run([py, "-m", "pip", "install", "pyinstaller", "pillow", "-q"])
+    run([py, "-m", "pip", "install", "pyinstaller", "-r", "requirements.txt", "-q"])
     run([py, str(root / "scripts" / "generate_app_ico.py"), str(root)])
 
     ico = root / "build" / "app_icon.ico"
     if not ico.is_file():
-        print(f"エラー: ICO がありません: {ico}", file=sys.stderr)
+        print(f"Error: ICO not found: {ico}", file=sys.stderr)
         return 1
 
     add_data = [
         "--add-data",
         f"{png};docs",
+        "--add-data",
+        f"{root / 'src' / 'inspection_records_search' / 'web' / 'index.html'};src/inspection_records_search/web",
     ]
+
     env_path = root / ".env"
     if env_path.is_file():
         add_data.extend(["--add-data", f"{env_path};."])
-        print(".env をバンドルに含めます。")
+        print("Bundling .env into the executable.")
     else:
         print(
-            "警告: .env が無いためバンドルしません。"
-            "配布時は exe と同じフォルダに .env を置けます。"
+            "Warning: .env not found, so it will not be bundled. "
+            "For distribution, place .env next to the exe if needed."
         )
 
     exe_name = "外観検査記録照会"
@@ -64,24 +67,20 @@ def main() -> int:
         str(ico),
         "--paths",
         "src",
-        "--hidden-import",
-        "PySide6.QtCore",
-        "--hidden-import",
-        "PySide6.QtGui",
-        "--hidden-import",
-        "PySide6.QtWidgets",
-        "--hidden-import",
-        "PySide6.QtSvg",
-        "--hidden-import",
-        "pyodbc",
-        "--hidden-import",
-        "dotenv",
+        "--collect-all",
+        "webview",
+        "--collect-all",
+        "qtpy",
+        "--collect-all",
+        "PyQt6",
+        "--exclude-module",
+        "PySide6",
         *add_data,
         "main.py",
     ]
     run(cmd)
     dist = root / "dist" / f"{exe_name}.exe"
-    print(f"完了: {dist}")
+    print(f"Built: {dist}")
     return 0
 
 
