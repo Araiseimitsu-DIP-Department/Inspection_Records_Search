@@ -1,5 +1,6 @@
-pywebview[qt]>=6.2.1
-PyQt6-WebEngine>=6.9.0
+# 配布 exe の容量削減のため Qt バックエンドは使わず Edge WebView2 を利用する。
+# 実行環境には Microsoft Edge WebView2 ランタイムが必要（多くの業務PCでは標準搭載）。
+pywebview>=6.2.1
 pyodbc>=5.0.0
 python-dotenv>=1.0.0
 openpyxl>=3.1.0

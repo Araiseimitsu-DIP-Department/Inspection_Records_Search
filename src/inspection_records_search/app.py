@@ -3,15 +3,10 @@
 from __future__ import annotations
 
 import logging
-import os
-
-# Force the Qt binding so the frozen executable does not depend on
-# Windows WebView2 runtime.
-os.environ.setdefault("QT_API", "pyqt6")
 
 import webview
 
-from inspection_records_search.config import get_window_icon_png_path, validate_database_settings
+from inspection_records_search.config import get_webview_window_icon_path, validate_database_settings
 from inspection_records_search.services.inspection_service import create_inspection_service
 from inspection_records_search.webview_app import AppBootstrap, WebAppBridge, load_index_html
 
@@ -40,7 +35,7 @@ def main() -> int:
 
     bridge = _build_bridge()
     html = load_index_html()
-    icon_path = get_window_icon_png_path()
+    icon_path = get_webview_window_icon_path()
     window = webview.create_window(
         "外観検査記録照会",
         html=html,
@@ -63,8 +58,9 @@ def main() -> int:
             )
 
     window.events.loaded += _maximize_on_load
+    # Edge WebView2 利用（Qt + QtWebEngine を同梱しないことで exe を大幅に軽量化）
     webview.start(
-        gui="qt",
+        gui="edgechromium",
         icon=str(icon_path) if icon_path is not None else None,
         localization=_WEBVIEW_LOCALIZATION,
     )

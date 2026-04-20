@@ -39,6 +39,9 @@ def main() -> int:
     add_data = [
         "--add-data",
         f"{png};docs",
+        # WinForms はウィンドウアイコンに .ico が必要（PNG は System.ArgumentException になる）
+        "--add-data",
+        f"{ico};docs",
         "--add-data",
         f"{root / 'src' / 'inspection_records_search' / 'web' / 'index.html'};src/inspection_records_search/web",
     ]
@@ -69,12 +72,21 @@ def main() -> int:
         "src",
         "--collect-all",
         "webview",
-        "--collect-all",
-        "qtpy",
-        "--collect-all",
-        "PyQt6",
+        # PyInstaller が動的 import を取りこぼす対策（参考: Gauge_Management の PinGaugeMgmt.spec）
+        "--hidden-import",
+        "webview.platforms.edgechromium",
+        "--hidden-import",
+        "webview.platforms.winforms",
+        "--hidden-import",
+        "webview.platforms.win32",
         "--exclude-module",
         "PySide6",
+        "--exclude-module",
+        "PyQt6",
+        "--exclude-module",
+        "PyQt5",
+        "--exclude-module",
+        "qtpy",
         *add_data,
         "main.py",
     ]

@@ -33,6 +33,21 @@ def get_window_icon_png_path() -> Path | None:
     return path if path.is_file() else None
 
 
+def get_webview_window_icon_path() -> Path | None:
+    """pywebview（WinForms / Edge WebView2）向けのアイコンパス。
+
+    WinForms の System.Drawing.Icon は .ico のみ対応のため、同梱の app_icon.ico を優先する。
+    """
+    bundled = resource_path("docs", "app_icon.ico")
+    if bundled.is_file():
+        return bundled
+    if not getattr(sys, "frozen", False):
+        dev_ico = get_application_base_dir() / "build" / "app_icon.ico"
+        if dev_ico.is_file():
+            return dev_ico
+    return get_window_icon_png_path()
+
+
 def get_web_index_html_path() -> Path:
     """Return the bundled frontend entry point."""
     return resource_path("src", "inspection_records_search", "web", "index.html")
