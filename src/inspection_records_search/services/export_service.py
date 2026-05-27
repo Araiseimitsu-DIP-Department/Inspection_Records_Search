@@ -1,4 +1,4 @@
-"""検索結果の Excel 出力（openpyxl）。保存先は Access と同じフォルダ（VBA 準拠）。"""
+"""検索結果の Excel 出力（openpyxl）。"""
 
 from __future__ import annotations
 
@@ -31,19 +31,28 @@ def export_to_xlsx(
     headers: list[str],
     rows: list[tuple],
     output_dir: Path | None = None,
+    output_path: Path | None = None,
 ) -> Path:
     """
-    output_dir があればそこへ、無ければ db_path と同じディレクトリへ保存する。
+    output_path があればそのパスへ保存する。
+    無ければ output_dir、db_path と同じディレクトリ、カレントディレクトリの順で保存する。
     戻り値は保存したパス。
     """
-    if output_dir is not None:
+    if output_path is not None:
+        out_path = output_path
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+    elif output_dir is not None:
         out_dir = output_dir
+        out_dir.mkdir(parents=True, exist_ok=True)
+        out_path = out_dir / filename
     elif db_path:
         out_dir = Path(db_path).resolve().parent
+        out_dir.mkdir(parents=True, exist_ok=True)
+        out_path = out_dir / filename
     else:
         out_dir = Path.cwd()
-    out_dir.mkdir(parents=True, exist_ok=True)
-    out_path = out_dir / filename
+        out_dir.mkdir(parents=True, exist_ok=True)
+        out_path = out_dir / filename
 
     wb = Workbook()
     ws = wb.active

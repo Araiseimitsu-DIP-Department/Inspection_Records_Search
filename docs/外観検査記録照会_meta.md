@@ -1,13 +1,13 @@
 ---
 title: "Access DB スキーマ抽出（移行・再現用）"
 export_spec: access-inspector/schema-export/v1
-generated_at: "2026-04-14T07:54:16.079526+00:00"
+generated_at: "2026-05-27T04:03:58.820842+00:00"
 source_file: "\\\\192.168.1.200\\共有\\品質保証課\\外観検査記録\\外観検査記録照会.accdb"
 table_count: 7
 relationship_count: 0
 view_count: 2
 warning_count: 7
-sum_row_count_where_known: 296924
+sum_row_count_where_known: 310057
 linked_table_synonym_count: 7
 ---
 
@@ -45,7 +45,7 @@ LLM に渡す場合は **「スキーマ JSON」セクション**と **「Postgr
 | Access ファイル | `\\192.168.1.200\共有\品質保証課\外観検査記録\外観検査記録照会.accdb` |
 | ODBC ドライバ | `Microsoft Access Driver (*.mdb, *.accdb)` |
 | テーブル数 | 7 |
-| 行数合計（取得できたテーブルのみ） | 296,924 |
+| 行数合計（取得できたテーブルのみ） | 310,057 |
 | リンクテーブル相当（ODBC: SYNONYM） | 7 |
 | 外部キー（検出分） | 0 |
 | ビュー / クエリ名 | 2 |
@@ -57,13 +57,13 @@ Mermaid 内のエンティティは `E0`, `E1`, … です。実テーブル名�
 
 | 記号 | テーブル名 | ODBC 型 | 行数 |
 |---|---|---:|---:|
-| E0 | `t_外観検査記録` | SYNONYM | 61,423 |
-| E1 | `t_外観検査集計` | SYNONYM | 45,662 |
+| E0 | `t_外観検査記録` | SYNONYM | 66,493 |
+| E1 | `t_外観検査集計` | SYNONYM | 49,684 |
 | E2 | `t_工程マスタ` | SYNONYM | 10 |
 | E3 | `t_数値検査員マスタ` | SYNONYM | 14 |
-| E4 | `t_数値検査記録` | SYNONYM | 22,945 |
+| E4 | `t_数値検査記録` | SYNONYM | 24,943 |
 | E5 | `t_検査員マスタ` | SYNONYM | 76 |
-| E6 | `t_現品票検索用` | SYNONYM | 166,794 |
+| E6 | `t_現品票検索用` | SYNONYM | 168,837 |
 
 ```mermaid
 erDiagram
@@ -216,14 +216,14 @@ CREATE TABLE "t_現品票検索用" (
 ```json
 {
   "export_spec": "access-inspector/schema-export/v1",
-  "generated_at": "2026-04-14T07:54:16.085065+00:00",
+  "generated_at": "2026-05-27T04:03:58.825422+00:00",
   "source": {
     "database_path": "\\\\192.168.1.200\\共有\\品質保証課\\外観検査記録\\外観検査記録照会.accdb",
     "driver_used": "Microsoft Access Driver (*.mdb, *.accdb)"
   },
   "summary": {
     "table_count": 7,
-    "sum_row_count_where_known": 296924,
+    "sum_row_count_where_known": 310057,
     "tables_with_row_count": 7,
     "linked_table_odbc_synonym_count": 7,
     "relationship_count": 0,
@@ -239,7 +239,7 @@ CREATE TABLE "t_現品票検索用" (
     {
       "name": "t_外観検査記録",
       "table_type": "SYNONYM",
-      "row_count": 61423,
+      "row_count": 66493,
       "row_count_error": null,
       "primary_key": [],
       "columns": [
@@ -439,12 +439,97 @@ CREATE TABLE "t_現品票検索用" (
           false
         ]
       ],
-      "column_stats": []
+      "column_stats": [
+        {
+          "column": "ID",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "検査員ID",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "生産ロットID",
+          "null_count": 13745,
+          "null_rate_pct": 20.7,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "工程NO",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "日付",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "時刻",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "品番",
+          "null_count": 9157,
+          "null_rate_pct": 13.8,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "品名",
+          "null_count": 9157,
+          "null_rate_pct": 13.8,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "客先",
+          "null_count": 9157,
+          "null_rate_pct": 13.8,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "数量",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "更新フラグ",
+          "null_count": 66494,
+          "null_rate_pct": 100.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "集計除外フラグ",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        }
+      ]
     },
     {
       "name": "t_外観検査集計",
       "table_type": "SYNONYM",
-      "row_count": 45662,
+      "row_count": 49684,
       "row_count_error": null,
       "primary_key": [],
       "columns": [
@@ -614,7 +699,78 @@ CREATE TABLE "t_現品票検索用" (
           false
         ]
       ],
-      "column_stats": []
+      "column_stats": [
+        {
+          "column": "ID",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "検査員ID",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "日付",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "生産ロットID",
+          "null_count": 134,
+          "null_rate_pct": 0.3,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "品番",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "品名",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "工程NO",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "数量",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "作業時間",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "集計除外フラグ",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        }
+      ]
     },
     {
       "name": "t_工程マスタ",
@@ -669,7 +825,22 @@ CREATE TABLE "t_現品票検索用" (
           "返品再検査"
         ]
       ],
-      "column_stats": []
+      "column_stats": [
+        {
+          "column": "工程NO",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "工程名",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        }
+      ]
     },
     {
       "name": "t_数値検査員マスタ",
@@ -754,12 +925,41 @@ CREATE TABLE "t_現品票検索用" (
           true
         ]
       ],
-      "column_stats": []
+      "column_stats": [
+        {
+          "column": "検査員ID",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "検査員名",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "区別",
+          "null_count": 3,
+          "null_rate_pct": 21.4,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "表示フラグ",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        }
+      ]
     },
     {
       "name": "t_数値検査記録",
       "table_type": "SYNONYM",
-      "row_count": 22945,
+      "row_count": 24943,
       "row_count_error": null,
       "primary_key": [],
       "columns": [
@@ -869,7 +1069,50 @@ CREATE TABLE "t_現品票検索用" (
           "F-6"
         ]
       ],
-      "column_stats": []
+      "column_stats": [
+        {
+          "column": "ID",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "日付時刻",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "生産ロットID",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "検査員ID",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "工程名",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "号機",
+          "null_count": 10,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        }
+      ]
     },
     {
       "name": "t_検査員マスタ",
@@ -969,12 +1212,48 @@ CREATE TABLE "t_現品票検索用" (
           "ま"
         ]
       ],
-      "column_stats": []
+      "column_stats": [
+        {
+          "column": "検査員ID",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "検査員名",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "表示位置",
+          "null_count": 42,
+          "null_rate_pct": 55.3,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "チーム",
+          "null_count": 38,
+          "null_rate_pct": 50.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "ふりがな",
+          "null_count": 4,
+          "null_rate_pct": 5.3,
+          "unique_count": null,
+          "unique_rate_pct": null
+        }
+      ]
     },
     {
       "name": "t_現品票検索用",
       "table_type": "SYNONYM",
-      "row_count": 166794,
+      "row_count": 168837,
       "row_count_error": null,
       "primary_key": [],
       "columns": [
@@ -1099,7 +1378,57 @@ CREATE TABLE "t_現品票検索用" (
           10000
         ]
       ],
-      "column_stats": []
+      "column_stats": [
+        {
+          "column": "生産ロットID",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "号機",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "品番",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "品名",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "客先",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "指示日",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "数量",
+          "null_count": 2,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        }
+      ]
     }
   ],
   "relationships": [],
@@ -1111,6 +1440,18 @@ CREATE TABLE "t_現品票検索用" (
     {
       "name": "Q_生産ロット集計",
       "type": "VIEW"
+    }
+  ],
+  "vba_modules": [
+    {
+      "name": "Form_f_個人別照会",
+      "type": "レポートモジュール",
+      "line_count": 91
+    },
+    {
+      "name": "Form_f_表示",
+      "type": "レポートモジュール",
+      "line_count": 200
     }
   ],
   "warnings": [
@@ -1129,20 +1470,20 @@ CREATE TABLE "t_現品票検索用" (
 
 | テーブル | ODBC 型 | 行数 | PK | インデックス数 |
 |---|---|---:|---|---:|
-| `t_外観検査記録` | SYNONYM | 61,423 | — | 0 |
-| `t_外観検査集計` | SYNONYM | 45,662 | — | 0 |
+| `t_外観検査記録` | SYNONYM | 66,493 | — | 0 |
+| `t_外観検査集計` | SYNONYM | 49,684 | — | 0 |
 | `t_工程マスタ` | SYNONYM | 10 | — | 0 |
 | `t_数値検査員マスタ` | SYNONYM | 14 | — | 0 |
-| `t_数値検査記録` | SYNONYM | 22,945 | — | 0 |
+| `t_数値検査記録` | SYNONYM | 24,943 | — | 0 |
 | `t_検査員マスタ` | SYNONYM | 76 | — | 0 |
-| `t_現品票検索用` | SYNONYM | 166,794 | — | 0 |
+| `t_現品票検索用` | SYNONYM | 168,837 | — | 0 |
 
 ## カラム詳細
 
 ### `t_外観検査記録`
 
 - **ODBC テーブル種別**: SYNONYM
-- **行数**: 61,423
+- **行数**: 66,493
 
 | 列 | Access 型 | PG 型ヒント | sql_data_type | サイズ | 小数 | NULL | PK |
 |---|---|---|---:|---:|---:|:---:|:---:|
@@ -1159,6 +1500,23 @@ CREATE TABLE "t_現品票検索用" (
 | 更新フラグ | VARCHAR | VARCHAR(1) | -9 | 1 |  | ○ |  |
 | 集計除外フラグ | BIT | BOOLEAN | -7 | 1 | 0 | × |  |
 
+**カラム統計**
+
+| 列 | NULL件数 | NULL率% | ユニーク件数 | ユニーク率% |
+|---|---:|---:|---:|---:|
+| ID | 0 | 0.0 | None | None |
+| 検査員ID | 0 | 0.0 | None | None |
+| 生産ロットID | 13745 | 20.7 | None | None |
+| 工程NO | 0 | 0.0 | None | None |
+| 日付 | 0 | 0.0 | None | None |
+| 時刻 | 0 | 0.0 | None | None |
+| 品番 | 9157 | 13.8 | None | None |
+| 品名 | 9157 | 13.8 | None | None |
+| 客先 | 9157 | 13.8 | None | None |
+| 数量 | 0 | 0.0 | None | None |
+| 更新フラグ | 66494 | 100.0 | None | None |
+| 集計除外フラグ | 0 | 0.0 | None | None |
+
 **サンプルデータ（先頭数行）**
 
 | ID | 検査員ID | 生産ロットID | 工程NO | 日付 | 時刻 | 品番 | 品名 | 客先 | 数量 | 更新フラグ | 集計除外フラグ |
@@ -1172,7 +1530,7 @@ CREATE TABLE "t_現品票検索用" (
 ### `t_外観検査集計`
 
 - **ODBC テーブル種別**: SYNONYM
-- **行数**: 45,662
+- **行数**: 49,684
 
 | 列 | Access 型 | PG 型ヒント | sql_data_type | サイズ | 小数 | NULL | PK |
 |---|---|---|---:|---:|---:|:---:|:---:|
@@ -1186,6 +1544,21 @@ CREATE TABLE "t_現品票検索用" (
 | 数量 | INTEGER | INTEGER | 4 | 10 | 0 | ○ |  |
 | 作業時間 | INTEGER | INTEGER | 4 | 10 | 0 | ○ |  |
 | 集計除外フラグ | BIT | BOOLEAN | -7 | 1 | 0 | × |  |
+
+**カラム統計**
+
+| 列 | NULL件数 | NULL率% | ユニーク件数 | ユニーク率% |
+|---|---:|---:|---:|---:|
+| ID | 0 | 0.0 | None | None |
+| 検査員ID | 0 | 0.0 | None | None |
+| 日付 | 0 | 0.0 | None | None |
+| 生産ロットID | 134 | 0.3 | None | None |
+| 品番 | 0 | 0.0 | None | None |
+| 品名 | 0 | 0.0 | None | None |
+| 工程NO | 0 | 0.0 | None | None |
+| 数量 | 0 | 0.0 | None | None |
+| 作業時間 | 0 | 0.0 | None | None |
+| 集計除外フラグ | 0 | 0.0 | None | None |
 
 **サンプルデータ（先頭数行）**
 
@@ -1206,6 +1579,13 @@ CREATE TABLE "t_現品票検索用" (
 |---|---|---|---:|---:|---:|:---:|:---:|
 | 工程NO | INTEGER | INTEGER | 4 | 10 | 0 | ○ |  |
 | 工程名 | VARCHAR | VARCHAR(10) | -9 | 10 |  | ○ |  |
+
+**カラム統計**
+
+| 列 | NULL件数 | NULL率% | ユニーク件数 | ユニーク率% |
+|---|---:|---:|---:|---:|
+| 工程NO | 0 | 0.0 | None | None |
+| 工程名 | 0 | 0.0 | None | None |
 
 **サンプルデータ（先頭数行）**
 
@@ -1229,6 +1609,15 @@ CREATE TABLE "t_現品票検索用" (
 | 区別 | VARCHAR | VARCHAR(5) | -9 | 5 |  | ○ |  |
 | 表示フラグ | BIT | BOOLEAN | -7 | 1 | 0 | × |  |
 
+**カラム統計**
+
+| 列 | NULL件数 | NULL率% | ユニーク件数 | ユニーク率% |
+|---|---:|---:|---:|---:|
+| 検査員ID | 0 | 0.0 | None | None |
+| 検査員名 | 0 | 0.0 | None | None |
+| 区別 | 3 | 21.4 | None | None |
+| 表示フラグ | 0 | 0.0 | None | None |
+
 **サンプルデータ（先頭数行）**
 
 | 検査員ID | 検査員名 | 区別 | 表示フラグ |
@@ -1242,7 +1631,7 @@ CREATE TABLE "t_現品票検索用" (
 ### `t_数値検査記録`
 
 - **ODBC テーブル種別**: SYNONYM
-- **行数**: 22,945
+- **行数**: 24,943
 
 | 列 | Access 型 | PG 型ヒント | sql_data_type | サイズ | 小数 | NULL | PK |
 |---|---|---|---:|---:|---:|:---:|:---:|
@@ -1252,6 +1641,17 @@ CREATE TABLE "t_現品票検索用" (
 | 検査員ID | VARCHAR | VARCHAR(4) | -9 | 4 |  | ○ |  |
 | 工程名 | VARCHAR | VARCHAR(30) | -9 | 30 |  | ○ |  |
 | 号機 | VARCHAR | VARCHAR(5) | -9 | 5 |  | ○ |  |
+
+**カラム統計**
+
+| 列 | NULL件数 | NULL率% | ユニーク件数 | ユニーク率% |
+|---|---:|---:|---:|---:|
+| ID | 0 | 0.0 | None | None |
+| 日付時刻 | 0 | 0.0 | None | None |
+| 生産ロットID | 0 | 0.0 | None | None |
+| 検査員ID | 0 | 0.0 | None | None |
+| 工程名 | 0 | 0.0 | None | None |
+| 号機 | 10 | 0.0 | None | None |
 
 **サンプルデータ（先頭数行）**
 
@@ -1276,6 +1676,16 @@ CREATE TABLE "t_現品票検索用" (
 | チーム | VARCHAR | VARCHAR(1) | -9 | 1 |  | ○ |  |
 | ふりがな | VARCHAR | VARCHAR(1) | -9 | 1 |  | ○ |  |
 
+**カラム統計**
+
+| 列 | NULL件数 | NULL率% | ユニーク件数 | ユニーク率% |
+|---|---:|---:|---:|---:|
+| 検査員ID | 0 | 0.0 | None | None |
+| 検査員名 | 0 | 0.0 | None | None |
+| 表示位置 | 42 | 55.3 | None | None |
+| チーム | 38 | 50.0 | None | None |
+| ふりがな | 4 | 5.3 | None | None |
+
 **サンプルデータ（先頭数行）**
 
 | 検査員ID | 検査員名 | 表示位置 | チーム | ふりがな |
@@ -1289,7 +1699,7 @@ CREATE TABLE "t_現品票検索用" (
 ### `t_現品票検索用`
 
 - **ODBC テーブル種別**: SYNONYM
-- **行数**: 166,794
+- **行数**: 168,837
 
 | 列 | Access 型 | PG 型ヒント | sql_data_type | サイズ | 小数 | NULL | PK |
 |---|---|---|---:|---:|---:|:---:|:---:|
@@ -1300,6 +1710,18 @@ CREATE TABLE "t_現品票検索用" (
 | 客先 | VARCHAR | VARCHAR(30) | -9 | 30 |  | ○ |  |
 | 指示日 | DATETIME | TIMESTAMP | 9 | 19 | 0 | ○ |  |
 | 数量 | INTEGER | INTEGER | 4 | 10 | 0 | ○ |  |
+
+**カラム統計**
+
+| 列 | NULL件数 | NULL率% | ユニーク件数 | ユニーク率% |
+|---|---:|---:|---:|---:|
+| 生産ロットID | 0 | 0.0 | None | None |
+| 号機 | 0 | 0.0 | None | None |
+| 品番 | 0 | 0.0 | None | None |
+| 品名 | 0 | 0.0 | None | None |
+| 客先 | 0 | 0.0 | None | None |
+| 指示日 | 0 | 0.0 | None | None |
+| 数量 | 2 | 0.0 | None | None |
 
 **サンプルデータ（先頭数行）**
 
@@ -1319,3 +1741,307 @@ CREATE TABLE "t_現品票検索用" (
 
 - `Q_生産ロットまとめ` （VIEW）
 - `Q_生産ロット集計` （VIEW）
+
+## VBA モジュール
+
+### `Form_f_個人別照会` （レポートモジュール / 91 行）
+
+```vba
+Option Compare Database
+Option Explicit
+
+'表示ボタン
+Private Sub btnDisp_Click()
+    Dim strSQL As String
+    Dim sMsg As String
+    
+    sMsg = ""
+    If IsNull(Me.cboKensain) Then sMsg = "検査員の指定がありません"
+    If IsNull(Me.txtKaishibi) Then sMsg = "表示開始日は必ず指定してください"
+    
+    If sMsg <> "" Then
+        MsgBox sMsg, vbCritical + vbOKOnly, "確認"
+        Me.txtKaishibi.SetFocus
+        Exit Sub
+    End If
+        
+    strSQL = "SELECT 検査員ID, 生産ロットID, 工程NO, 日付, 時刻, 品番, 品名, 客先 "
+    strSQL = strSQL & "FROM t_外観検査記録 "
+    strSQL = strSQL & "WHERE 検査員ID = '" & Me.cboKensain & "' "
+    If Not IsNull(Me.txtShuryobi) Then
+        strSQL = strSQL & "AND 日付 BETWEEN #" & Me.txtKaishibi & "# "
+        strSQL = strSQL & "AND #" & Me.txtShuryobi & "# "
+    Else
+        strSQL = strSQL & "AND 日付 = #" & Me.txtKaishibi & "# "
+    End If
+    strSQL = strSQL & "ORDER BY 日付, 時刻;"
+    Me.f_個人別照会のサブフォーム1.Form.RecordSource = strSQL
+    
+    strSQL = "SELECT 検査員ID, 生産ロットID, 工程NO, 日付, 品番, 品名, 作業時間, 数量 "
+    strSQL = strSQL & "FROM t_外観検査集計 "
+    strSQL = strSQL & "WHERE 検査員ID = '" & Me.cboKensain & "' "
+    If Not IsNull(Me.txtShuryobi) Then
+        strSQL = strSQL & "AND 日付 BETWEEN #" & Me.txtKaishibi & "# "
+        strSQL = strSQL & "AND #" & Me.txtShuryobi & "# "
+    Else
+        strSQL = strSQL & "AND 日付 = #" & Me.txtKaishibi & "# "
+    End If
+    strSQL = strSQL & "ORDER BY 日付, ID;"
+    Me.f_個人別照会のサブフォーム2.Form.RecordSource = strSQL
+    
+    Me.Refresh
+    Me.txtKaishibi.SetFocus
+    
+End Sub
+
+'戻るボタン
+Private Sub btnToHome_Click()
+    DoCmd.Close acForm, "f_個人別照会"
+End Sub
+
+'検査員が更新された
+Private Sub cboKensain_AfterUpdate()
+    Me.btnDisp.SetFocus
+End Sub
+
+'フォームを開く時
+Private Sub Form_Open(Cancel As Integer)
+    Dim strSQL As String
+    
+    Me.f_個人別照会のサブフォーム1.Form.検査員ID.ColumnHidden = True
+    
+    Me.f_個人別照会のサブフォーム1.Form.生産ロットID.ColumnWidth = 567 * 2
+    Me.f_個人別照会のサブフォーム1.Form.工程NO.ColumnWidth = 567 * 1.4
+    Me.f_個人別照会のサブフォーム1.Form.日付.ColumnWidth = 567 * 2.3
+    Me.f_個人別照会のサブフォーム1.Form.時刻.ColumnWidth = 567 * 1.6
+    Me.f_個人別照会のサブフォーム1.Form.品番.ColumnWidth = 567 * 4.5
+    Me.f_個人別照会のサブフォーム1.Form.品名.ColumnWidth = 567 * 4.5
+    Me.f_個人別照会のサブフォーム1.Form.客先.ColumnWidth = 567 * 3
+
+    strSQL = "SELECT 検査員ID, 生産ロットID, 工程NO, 日付, 時刻, 品番, 品名, 客先 "
+    strSQL = strSQL & "FROM t_外観検査記録 "
+    strSQL = strSQL & "WHERE 検査員ID = 'ZZZZ';"
+    Me.f_個人別照会のサブフォーム1.Form.RecordSource = strSQL
+    
+    Me.f_個人別照会のサブフォーム2.Form.検査員ID.ColumnHidden = True
+    
+    Me.f_個人別照会のサブフォーム2.Form.生産ロットID.ColumnWidth = 567 * 2
+    Me.f_個人別照会のサブフォーム2.Form.工程NO.ColumnWidth = 567 * 1.4
+    Me.f_個人別照会のサブフォーム2.Form.日付.ColumnWidth = 567 * 2.3
+    Me.f_個人別照会のサブフォーム2.Form.品番.ColumnWidth = 567 * 4.5
+    Me.f_個人別照会のサブフォーム2.Form.品名.ColumnWidth = 567 * 4.5
+    Me.f_個人別照会のサブフォーム2.Form.作業時間.ColumnWidth = 567 * 1.6
+    Me.f_個人別照会のサブフォーム2.Form.数量.ColumnWidth = 567 * 1.6
+    
+    strSQL = "SELECT 検査員ID, 生産ロットID, 工程NO, 日付, 品番, 品名, 作業時間, 数量 "
+    strSQL = strSQL & "FROM t_外観検査集計 "
+    strSQL = strSQL & "WHERE 検査員ID = 'ZZZZ';"
+    Me.f_個人別照会のサブフォーム2.Form.RecordSource = strSQL
+End Sub
+```
+
+### `Form_f_表示` （レポートモジュール / 200 行）
+
+```vba
+Option Compare Database
+Option Explicit
+
+'表示ボタン
+Private Sub btnDisp_Click()
+    Dim strSQL As String
+    
+    If IsNull(Me.txtKaishibi) Then
+        MsgBox "開始日は必ず入力してください", vbCritical + vbOKOnly, "確認"
+        Me.txtKaishibi.SetFocus
+        Exit Sub
+    End If
+    
+    strSQL = "SELECT t_外観検査集計.検査員ID, t_検査員マスタ.検査員名, t_外観検査集計.日付, t_外観検査集計.生産ロットID, "
+    strSQL = strSQL & "t_外観検査集計.品番, 品名, t_外観検査集計.工程NO, t_外観検査集計.数量, t_外観検査集計.作業時間, t_外観検査集計.集計除外フラグ, "
+    strSQL = strSQL & "t_数値検査員マスタ.検査員名 AS 数値検査員名 "
+    strSQL = strSQL & "FROM ((t_外観検査集計 LEFT JOIN t_検査員マスタ ON t_外観検査集計.検査員ID = t_検査員マスタ.検査員ID) "
+    strSQL = strSQL & "LEFT JOIN t_数値検査記録 ON t_外観検査集計.生産ロットID = t_数値検査記録.生産ロットID) "
+    strSQL = strSQL & "LEFT JOIN t_数値検査員マスタ ON t_数値検査記録.検査員ID = t_数値検査員マスタ.検査員ID "
+    '日付指定
+    If Not IsNull(Me.txtKaishibi) And Not IsNull(Me.txtShuryobi) Then       '両方とも指定あり
+        strSQL = strSQL & "WHERE 日付 BETWEEN #" & Me.txtKaishibi & "# AND #" & Me.txtShuryobi & "#"
+    Else
+        strSQL = strSQL & "WHERE 日付 = #" & Me.txtKaishibi & "#"
+    End If
+    '品番指定
+    If Not IsNull(Me.txtHinban) Then
+        strSQL = strSQL & " AND 品番 = '" & Me.txtHinban & "'"
+    End If
+    strSQL = strSQL & " ORDER BY t_外観検査集計.日付, t_外観検査集計.検査員ID, t_外観検査集計.ID;"
+    
+    Me.f_表示のサブフォーム1.Form.RecordSource = strSQL
+    
+    Me.Refresh
+    
+    Me.txtKaishibi.SetFocus
+End Sub
+
+'生産ロットID別集計表示ボタン
+Private Sub btnDisp2_Click()
+    Dim strSQL As String
+    
+    'サブフォーム2のデータを表示
+    strSQL = strSQL & "SELECT 生産ロットID, 工程NO, 品番, "
+    strSQL = strSQL & "品名, 数量, 作業時間の合計 "
+    strSQL = strSQL & "FROM Q_生産ロット集計 "
+    
+    '品番条件をセット
+    If Not IsNull(Me.txtHinban2) Then
+        strSQL = strSQL & "WHERE 品番 = '" & Me.txtHinban2 & "' "
+    End If
+    
+    '工程No条件をセット
+    If Not IsNull(Me.txtKoutei) Then
+        If InStr(1, strSQL, "WHERE", vbTextCompare) > 0 Then            '既にWHERE句あり
+            strSQL = strSQL & "AND 工程NO = '" & Me.txtKoutei & "' "
+        Else
+            strSQL = strSQL & "WHERE 工程NO = '" & Me.txtKoutei & "' "
+        End If
+    End If
+    
+    strSQL = strSQL & "ORDER BY 生産ロットID, 工程NO;"
+    
+    Me.f_表示のサブフォーム2.Form.RecordSource = strSQL
+    
+    Me.Refresh
+    
+    Me.txtHinban2.SetFocus
+End Sub
+
+'エクスポートボタン
+Private Sub btnExport_Click()
+    Call ToExcelExport(Me.f_表示のサブフォーム1.Form.RecordsetClone, "外観検査集計.xlsx")
+End Sub
+
+'エクスポートボタン2
+Private Sub btnExport2_Click()
+    Call ToExcelExport(Me.f_表示のサブフォーム2.Form.RecordsetClone, "外観検査ロット別集計.xlsx")
+End Sub
+
+'Excelへエクスポート
+Private Sub ToExcelExport(objRS As Object, sFname As String)
+    Dim xls As Object           'Excel.Applicationを代入するオブジェクト変数
+    Dim wkb As Object           'Excel.Wookbookを代入するオブジェクト変数
+    Dim rst As DAO.Recordset    '現在のレコードセットを入れる変数
+    Dim idx As Long
+    Dim sPath As String
+    
+    If MsgBox("Excelデータへのエクスポートを行います。実行しますか？", vbQuestion + vbYesNo, "確認") <> vbYes Then Exit Sub
+
+    On Error GoTo Err_ToExcelExport
+    
+    DoCmd.SetWarnings False
+
+    Set rst = Nothing                                               'データリストの初期化
+    Set rst = objRS     'フォームのレコードセットのクローンを代入
+
+    'レコードが存在しない場合、処理を中止
+    If rst.BOF = True And rst.EOF = True Then
+        MsgBox "出力出来るデータがありません。", vbOKOnly + vbExclamation, "出力不可"
+        GoTo Exit_ToExcelExport
+    End If
+
+    'レコードが存在する場合、Excelに出力
+    rst.MoveFirst                                   'レコードセットの最初に移動
+    
+    Set xls = CreateObject("Excel.Application")     'Excelファイルを内部的に作成
+    Set wkb = xls.Workbooks.Add()                   '作成されたExcelファイルにワークブックを追加
+
+    '追加されたワークブックに、レコードセットのデータをコピー
+    With wkb.Worksheets(1)
+        For idx = 1 To rst.Fields.Count                     'Excel側のヘッダ部
+            .Cells(1, idx).Value = rst.Fields(idx - 1).Name
+        Next
+        .Range("A2").CopyFromRecordset Data:=rst            'データ部分
+    End With
+
+    'Excelを保存
+    sPath = Application.CurrentProject.Path                         'Accressと同じフォルダ
+    xls.Application.DisplayAlerts = False                           '上書き確認メッセージを出さない
+    wkb.Close SaveChanges:=True, FileName:=sPath & "\" & sFname     '保存
+    
+    'メモリに展開されたExcel用オブジェクト変数を開放
+    Set wkb = Nothing
+    Set xls = Nothing
+
+    DoCmd.SetWarnings True
+    
+    MsgBox "Excelファイルへ保存しました( " & sFname & " )", vbInformation + vbOKOnly, "確認"
+
+Exit_ToExcelExport:
+    objRS.Close               'レコードセットを閉じる
+    Set objRS = Nothing
+    Exit Sub
+
+Err_ToExcelExport:
+    MsgBox Err.Description
+    Resume Exit_ToExcelExport
+End Sub
+
+'個人別データ照会ボタン
+Private Sub btnKojinbetu_Click()
+    DoCmd.OpenForm "f_個人別照会", acNormal
+End Sub
+
+'リフレッシュボタン
+Private Sub btnRefresh_Click()
+    Me.Refresh
+End Sub
+
+'戻るボタン
+Private Sub btnToHome_Click()
+    DoCmd.Quit
+End Sub
+
+'フォームを開く時
+Private Sub Form_Open(Cancel As Integer)
+    Dim strSQL As String
+    
+    'サブフォーム1、列幅設定
+    Me.f_表示のサブフォーム1.Form.ID.ColumnHidden = True
+    
+    Me.f_表示のサブフォーム1.Form.検査員ID.ColumnWidth = 567 * 2.2
+    Me.f_表示のサブフォーム1.Form.検査員名.ColumnWidth = 567 * 2.1
+    Me.f_表示のサブフォーム1.Form.日付.ColumnWidth = 567 * 2.3
+    Me.f_表示のサブフォーム1.Form.生産ロットID.ColumnWidth = 567 * 2.6
+    Me.f_表示のサブフォーム1.Form.品番.ColumnWidth = 567 * 4.9
+    Me.f_表示のサブフォーム1.Form.品名.ColumnWidth = 567 * 4.9
+    Me.f_表示のサブフォーム1.Form.工程NO.ColumnWidth = 567 * 1.4
+    Me.f_表示のサブフォーム1.Form.数量.ColumnWidth = 567 * 2.2
+    Me.f_表示のサブフォーム1.Form.作業時間.ColumnWidth = 567 * 2.2
+    Me.f_表示のサブフォーム1.Form.集計除外フラグ.ColumnHidden = True
+    Me.f_表示のサブフォーム1.Form.数値検査員名.ColumnWidth = 567 * 2.9
+
+    'サブフォーム1のデータを表示しない(存在しない検査員IDを抽出)
+    strSQL = "SELECT t_外観検査集計.検査員ID, t_検査員マスタ.検査員名, t_外観検査集計.日付, t_外観検査集計.生産ロットID, "
+    strSQL = strSQL & "t_外観検査集計.品番, 品名, t_外観検査集計.工程NO, t_外観検査集計.数量, t_外観検査集計.作業時間, t_外観検査集計.集計除外フラグ, "
+    strSQL = strSQL & "t_数値検査員マスタ.検査員名 AS 数値検査員名 "
+    strSQL = strSQL & "FROM ((t_外観検査集計 LEFT JOIN t_検査員マスタ ON t_外観検査集計.検査員ID = t_検査員マスタ.検査員ID) "
+    strSQL = strSQL & "LEFT JOIN t_数値検査記録 ON t_外観検査集計.生産ロットID = t_数値検査記録.生産ロットID) "
+    strSQL = strSQL & "LEFT JOIN t_数値検査員マスタ ON t_数値検査記録.検査員ID = t_数値検査員マスタ.検査員ID "
+    strSQL = strSQL & "WHERE t_外観検査集計.検査員ID = 'ZZZZ';"
+    Me.f_表示のサブフォーム1.Form.RecordSource = strSQL
+    
+    'サブフォーム2、列幅設定
+    Me.f_表示のサブフォーム2.Form.生産ロットID.ColumnWidth = 567 * 2.6
+    Me.f_表示のサブフォーム2.Form.品番.ColumnWidth = 567 * 5
+    Me.f_表示のサブフォーム2.Form.品名.ColumnWidth = 567 * 5
+    Me.f_表示のサブフォーム2.Form.工程NO.ColumnWidth = 567 * 1.4
+    Me.f_表示のサブフォーム2.Form.数量.ColumnWidth = 567 * 2.2
+    Me.f_表示のサブフォーム2.Form.作業時間の合計.ColumnWidth = 567 * 2.2
+    
+    'サブフォーム2のデータを表示しない(存在しない生産ロットIDを抽出)
+    strSQL = "SELECT Q_生産ロット集計.生産ロットID, Q_生産ロット集計.工程NO, Q_生産ロット集計.品番, "
+    strSQL = strSQL & "Q_生産ロット集計.品名, Q_生産ロット集計.数量, Q_生産ロット集計.作業時間の合計 "
+    strSQL = strSQL & "FROM Q_生産ロット集計 "
+    strSQL = strSQL & "WHERE Q_生産ロット集計.生産ロットID = 'Z999999';"
+    Me.f_表示のサブフォーム2.Form.RecordSource = strSQL
+    
+End Sub
+```
+

@@ -64,13 +64,18 @@ runtime/
 *.temp
 *.bak
 
-# === Excel 出力（アプリが Access 隣に保存する想定だが、誤ってリポジトリ直下に出た場合） ===
+# === Excel 出力（保存ダイアログで誤ってリポジトリ内に保存した場合） ===
 *.xlsx
 
-# === Access・ローカル DB（運用 DB はコミットしない） ===
+# === Access・ローカル DB・DB バックアップ（運用 DB はコミットしない） ===
 *.accdb
 *.mdb
 *.laccdb
 *.ldb
 *.db
 *.sqlite3
+*.sqlite
+*.dump
+*.backup
+*.sql.gz
+*.dump.gz

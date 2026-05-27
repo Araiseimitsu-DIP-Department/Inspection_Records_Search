@@ -30,7 +30,7 @@ def create_inspection_repository() -> InspectionRepository:
         dsn = get_postgres_dsn()
         if not dsn:
             raise ConfigurationError(
-                "DATABASE_BACKEND=postgres の場合、POSTGRES_DSN を設定してください。"
+                "DB_BACKEND=postgres の場合、POSTGRES_CONNECTION_URL を設定してください。"
             )
         return PostgresInspectionRepository(dsn)
-    raise ConfigurationError(f"DATABASE_BACKEND の値が不正です: {backend}")
+    raise ConfigurationError(f"DB_BACKEND の値が不正です: {backend}")

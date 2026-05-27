@@ -6,6 +6,7 @@ import datetime as dt
 import logging
 from dataclasses import dataclass
 from decimal import Decimal
+from pathlib import Path
 from typing import Any
 
 import webview
@@ -406,12 +407,15 @@ class WebAppBridge:
                 tuple(_restore_cell(cell) for cell in row)
                 for row in rows
             ]
+            save_path = self._choose_export_path(filename)
+            if save_path is None:
+                return _ok({"cancelled": True})
             out_path = export_to_xlsx(
                 None,
                 filename,
                 headers,
                 restored_rows,
-                output_dir=self._svc.export_directory,
+                output_path=save_path,
             )
             return _ok({"path": str(out_path)})
         except Exception as exc:  # noqa: BLE001
@@ -463,6 +467,23 @@ class WebAppBridge:
                 }
             )
         return pairs
+
+    def _choose_export_path(self, filename: str) -> Path | None:
+        default_dir = str(self._svc.export_directory) if self._svc else ""
+        if self._window is None:
+            return Path(default_dir) / filename if default_dir else Path(filename)
+        result = self._window.create_file_dialog(
+            webview.FileDialog.SAVE,
+            directory=default_dir,
+            save_filename=filename,
+            file_types=("Excel ファイル (*.xlsx)",),
+        )
+        if not result:
+            return None
+        selected = Path(result[0])
+        if selected.suffix.lower() != ".xlsx":
+            selected = selected.with_suffix(".xlsx")
+        return selected
 
 
 def load_index_html() -> str:

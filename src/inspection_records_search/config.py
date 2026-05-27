@@ -74,13 +74,21 @@ def get_access_db_path() -> str:
 def get_database_backend() -> str:
     """Return the configured database backend."""
     load_env()
-    return (os.getenv("DATABASE_BACKEND") or "access").strip().lower()
+    return (
+        os.getenv("DB_BACKEND")
+        or os.getenv("DATABASE_BACKEND")
+        or "access"
+    ).strip().lower()
 
 
 def get_postgres_dsn() -> str:
     """Return the PostgreSQL DSN from .env."""
     load_env()
-    return (os.getenv("POSTGRES_DSN") or "").strip().strip('"')
+    return (
+        os.getenv("POSTGRES_CONNECTION_URL")
+        or os.getenv("POSTGRES_DSN")
+        or ""
+    ).strip().strip('"')
 
 
 def get_export_dir() -> str:
@@ -115,9 +123,9 @@ def validate_database_settings() -> tuple[bool, str]:
     if backend == "postgres":
         dsn = get_postgres_dsn()
         if not dsn:
-            return False, "Set POSTGRES_DSN when DATABASE_BACKEND=postgres."
+            return False, "Set POSTGRES_CONNECTION_URL when DB_BACKEND=postgres."
         return True, ""
-    return False, f"Invalid DATABASE_BACKEND value: {backend}"
+    return False, f"Invalid DB_BACKEND value: {backend}"
 
 
 def resolve_export_dir(default_dir: Path) -> Path:

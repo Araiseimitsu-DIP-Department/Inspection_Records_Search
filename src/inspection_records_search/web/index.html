@@ -1334,6 +1334,10 @@
       setBusy(true, "Excel を出力中...");
       try {
         const result = await callApi("export_table", filename, table.headers, table.rows);
+        if (result.cancelled) {
+          toast("出力キャンセル", "Excel 出力をキャンセルしました。", "info", 2400);
+          return;
+        }
         toast("出力完了", `保存しました。\n${result.path}`, "success", 4200);
       } catch (err) {
         toast("出力失敗", err.message || String(err), "error", 6500);

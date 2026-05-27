@@ -1,370 +1,197 @@
-# PostgreSQL 移行メモ
+﻿# Access -> PostgreSQL 移行手順書
 
 ## 目的
 
-本書は、`外観検査記録照会` アプリの現行実装と、`docs/外観検査記録照会_meta.md` に記録された Access メタデータをもとに、将来 Microsoft Access から PostgreSQL へ移行する際の設計メモを整理したものです。
+既存の Access データベース `外観検査記録照会.accdb` を PostgreSQL へ移行するための手順書です。
 
-この文書の方針は次のとおりです。
+PostgreSQL 側の物理名は英語表記に統一します。Access 側の元テーブル・元カラムは日本語名のまま読み取り、移行スクリプトで PostgreSQL の英語名へマッピングします。アプリ画面と Excel 出力の表示列は従来どおり日本語名です。
 
-- まずは **現行アプリを止めずに動かすこと** を優先する
-- Access の物理名をできるだけ維持する
-- 推測で確定せず、未確認の点は未確認と明記する
-- 画面の見え方よりも、検索条件・集計条件・出力結果の互換性を優先する
+## 現時点の状態
 
----
+- `docs/` 配下の Access メタデータ、DDL 草案、VBA、フォーム抽出を確認済み
+- PostgreSQL repository は英語物理名参照へ移行済み
+- 移行 SQL と Access -> PostgreSQL 投入スクリプトは英語物理名対応済み
+- PostgreSQL 接続テスト、検証投入、インデックス、制約、検証まで完了
+- `DB_BACKEND=postgres` で検索と Excel 出力の実画面確認済み
+- 前回作成した日本語物理名の PostgreSQL テーブル / view は削除済み
 
-## 現行アプリの構成
-
-現行アプリは PySide6 ではなく `pywebview` ベースで動作しています。  
-画面は HTML/CSS/JavaScript、DB アクセスは Python 側の repository に分離されています。
-
-### 主なファイル
+## 移行元
 
 ```text
-Inspection_Records_Search/
-├─ main.py
-├─ build_exe.ps1
-├─ requirements.txt
-├─ README.md
-├─ docs/
-│  ├─ 外観検査記録照会_meta.md
-│  └─ 精密部品の品質検査.png
-├─ scripts/
-│  ├─ generate_app_ico.py
-│  └─ pyinstaller_build.py
-└─ src/inspection_records_search/
-   ├─ app.py
-   ├─ config.py
-   ├─ webview_app.py
-   ├─ web/
-   │  └─ index.html
-   ├─ application/
-   │  └─ inspection_use_case.py
-   ├─ infrastructure/
-   │  ├─ access_gateway.py
-   │  ├─ postgres_repository.py
-   │  └─ repository_factory.py
-   ├─ services/
-   │  ├─ inspection_service.py
-   │  └─ export_service.py
-   ├─ domain/
-   │  ├─ models.py
-   │  └─ repositories.py
-   └─ shared/
-      └─ errors.py
+\\192.168.1.200\共有\品質保証課\外観検査記録\外観検査記録照会.accdb
 ```
 
-### 処理の流れ
+## 移行先
 
-1. `main.py` から `inspection_records_search.app.main()` を起動する
-2. `config.py` で `.env` を読み込み、DB 設定を検証する
-3. `repository_factory.py` で `Access` か `PostgreSQL` かを選ぶ
-4. `webview_app.py` が Python ブリッジとして UI からの操作を受ける
-5. `web/index.html` が検索画面・一覧・ダイアログ・Excel 出力 UI を担う
-6. `services/export_service.py` が検索結果を `openpyxl` で `.xlsx` に出力する
+```env
+ACCESS_DB_PATH=\\192.168.1.200\共有\品質保証課\外観検査記録\外観検査記録照会.accdb
+DB_BACKEND=postgres
+POSTGRES_CONNECTION_URL=postgresql://postgres:password@192.168.1.120:5432/inspection_records_search
+POSTGRES_SCHEMA=public
+EXPORT_DIR=
+```
 
-### 現在の PostgreSQL 連携状態
+## 物理名マッピング
 
-- `src/inspection_records_search/infrastructure/postgres_repository.py` は移行用のスタブ
-- `DATABASE_BACKEND=postgres` は選べるが、現時点では PostgreSQL 実処理は未実装
-- そのため、本書は **今後の PostgreSQL 実装方針** をまとめたメモとして扱う
+| Access テーブル | PostgreSQL テーブル | 用途 |
+|---|---|---|
+| `t_外観検査記録` | `appearance_records` | 検査員別照会の明細 |
+| `t_外観検査集計` | `appearance_summary` | メイン検索、検査員別照会の集計、ロット集計元 |
+| `t_工程マスタ` | `process_master` | 工程凡例 |
+| `t_数値検査員マスタ` | `numeric_inspector_master` | 数値検査員名 |
+| `t_数値検査記録` | `numeric_inspection_records` | 生産ロットID経由の数値検査情報 |
+| `t_検査員マスタ` | `inspector_master` | 検査員候補、検査員名 |
+| `t_現品票検索用` | `product_catalog` | ロット・品番・指示日情報 |
+| `Q_生産ロットまとめ` | `production_lot_summary` | ロット集計 view |
+| `Q_生産ロット集計` | `production_lot_aggregate` | アプリ用ロット集計 view |
 
----
+| Access カラム | PostgreSQL カラム | 対象 |
+|---|---|---|
+| `ID` | `id` | `appearance_records`, `appearance_summary`, `numeric_inspection_records` |
+| `検査員ID` | `inspector_id` | 各検査員系テーブル |
+| `検査員名` | `inspector_name` | `inspector_master`, `numeric_inspector_master` |
+| `生産ロットID` | `production_lot_id` | ロット参照系 |
+| `工程NO` | `process_no` | 外観検査・工程・ロット集計 |
+| `工程名` | `process_name` | `process_master`, `numeric_inspection_records` |
+| `日付` | `inspection_date` | `appearance_records`, `appearance_summary` |
+| `時刻` | `inspection_time` | `appearance_records` |
+| `品番` | `part_number` | 外観検査・現品票 |
+| `品名` | `part_name` | 外観検査・現品票 |
+| `客先` | `customer_name` | 外観検査・現品票 |
+| `数量` | `quantity` | 外観検査・現品票・view |
+| `作業時間` | `work_minutes` | `appearance_summary` |
+| `作業時間の合計` | `total_work_minutes` | `production_lot_summary`, `production_lot_aggregate` |
+| `更新フラグ` | `updated_flag` | `appearance_records` |
+| `集計除外フラグ` | `excluded_from_summary` | `appearance_records`, `appearance_summary` |
+| `日付時刻` | `recorded_at` | `numeric_inspection_records` |
+| `号機` | `machine_no` | `numeric_inspection_records`, `product_catalog` |
+| `区別` | `category` | `numeric_inspector_master` |
+| `表示フラグ` | `visible` | `numeric_inspector_master` |
+| `表示位置` | `display_order` | `inspector_master` |
+| `チーム` | `team` | `inspector_master` |
+| `ふりがな` | `kana` | `inspector_master` |
+| `指示日` | `instruction_date` | `product_catalog` |
 
-## 現行の DB 依存ポイント
+## PostgreSQL ファイル
 
-`AccessInspectionRepository` が Access SQL を直接実行しています。  
-現行アプリが参照している中心テーブルは次のとおりです。
-
-| 画面 / 用途 | 主な参照先 |
+| ファイル | 役割 |
 |---|---|
-| 検査員集計 | `t_外観検査集計`, `t_検査員マスタ`, `t_数値検査記録`, `t_数値検査員マスタ` |
-| ロットID集計 | `Q_生産ロット集計` |
-| 検査員別照会（明細） | `t_外観検査記録` |
-| 検査員別照会（集計） | `t_外観検査集計` |
-| 工程凡例 | `t_工程マスタ`、または `Q_生産ロット集計` / `t_外観検査集計` / `t_外観検査記録` の `工程NO` |
-| 検査員候補 | `t_検査員マスタ` |
+| `database/postgresql/001_schema.sql` | 英語物理名のテーブルと view 作成 |
+| `database/postgresql/002_indexes.sql` | 検索用インデックス |
+| `database/postgresql/003_constraints.sql` | PK / UNIQUE / CHECK 制約 |
+| `database/postgresql/020_validation.sql` | 件数・重複・参照欠損検証 |
+| `database/postgresql/migration_notes.md` | 実行結果メモ |
+| `scripts/migrate_access_to_postgres.py` | Access 日本語物理名から PostgreSQL 英語物理名への投入スクリプト |
 
-現行 SQL の特徴は以下です。
+## アプリ側の実装
 
-- `t_外観検査記録` と `t_外観検査集計` は日付範囲で検索する
-- `t_外観検査集計` は `検査員マスタ` と `数値検査` 系テーブルを JOIN して表示する
-- 工程は `工程NO` と `工程名` の両方を扱う
-- 時刻値は Access の `1899/12/30 HH:MM` 形式で返ることがあるため、UI 側で時刻部分のみ表示している
+PostgreSQL 側は次の実装が英語物理名を参照します。
 
----
+```text
+src/inspection_records_search/infrastructure/postgres_repository.py
+src/inspection_records_search/infrastructure/repository_factory.py
+src/inspection_records_search/config.py
+```
 
-## Access メタデータの要約
+PostgreSQL repository は英語列名を SELECT し、画面互換のため日本語 alias を付けて `TableData = tuple[list[str], list[tuple]]` を返します。
 
-`docs/外観検査記録照会_meta.md` から確認できる範囲では、次の構成です。
+## 本番移行手順
 
-- テーブル数: 7
-- ビュー / クエリ数: 2
-- 外部キーのメタデータは取得できていない
-- 対象テーブルはすべて ODBC 上は `SYNONYM` 扱い
+### 1. 事前停止
 
-確認できたビュー / クエリ:
+Access アプリ利用者へ停止時間を連絡し、移行中は Access 側を更新しない状態にします。
 
-- `Q_生産ロットまとめ`
-- `Q_生産ロット集計`
+### 2. バックアップ
 
----
+Access ファイルと PostgreSQL の既存DBをバックアップします。
 
-## PostgreSQL 移行方針
+### 3. dry-run
 
-### 方針 1: 物理名を維持する
+```powershell
+.\.venv\Scripts\python.exe scripts\migrate_access_to_postgres.py --dry-run
+```
 
-初回移行では、可能な限り Access のテーブル名・カラム名を維持します。
+### 4. 検証投入 / 完全移行時の投入
 
-- テーブル名は `t_外観検査記録` のような現行名を維持する
-- 日本語識別子は PostgreSQL でもそのまま使う
-- アプリ側の SQL 差分を最小化する
+```powershell
+.\.venv\Scripts\python.exe scripts\migrate_access_to_postgres.py --apply-schema --truncate --indexes --constraints
+```
 
-この方針により、修正範囲を次のように絞れます。
+このスクリプトは次を行います。
 
-- 接続方式
-- SQL 方言差分
-- 日付・時刻型の整理
-- 採番やシーケンスの扱い
+- Access 7テーブルを読み取り
+- PostgreSQL 英語物理名へ変換して投入
+- `id` identity sequence を調整
+- `numeric_inspection_records` 側にだけ存在する旧検査員IDを `numeric_inspector_master` へ `未登録` / `補正` / `visible=false` として補完
+- schema / indexes / constraints を適用
 
-### 方針 2: Access 固有の表現を外す
+2026-05-27 の英語物理名検証投入結果:
 
-移行時に見直すべき代表例:
+```text
+appearance_records: 66,513 rows
+appearance_summary: 49,701 rows
+process_master: 10 rows
+numeric_inspector_master: 21 rows
+numeric_inspection_records: 24,943 rows
+inspector_master: 76 rows
+product_catalog: 168,837 rows
+```
 
-- `Nz(...)` や `Len(Trim(...))`
-- `SELECT DISTINCT ... ORDER BY ...` の Access 依存表現
-- `1899/12/30` を前提とした時刻表示
-- 文字列比較に依存した工程検索
+### 5. 検証
 
-### 方針 3: 一時的な互換テーブルは最小限にする
+PostgreSQL 接続後、`database/postgresql/020_validation.sql` を実行します。
 
-現行アプリは帳票の一部をメモリ上で生成しているため、旧 Access の一時テーブルをそのまま PostgreSQL に移す必要はありません。  
-必要なものだけ残し、不要なものは廃止する方が保守しやすくなります。
+確認項目:
 
----
+- 7テーブルの件数
+- `id` の重複
+- `appearance_summary.inspector_id -> inspector_master.inspector_id` の参照欠損
+- `numeric_inspection_records.inspector_id -> numeric_inspector_master.inspector_id` の参照欠損
+- `appearance_summary.production_lot_id -> product_catalog.production_lot_id` の参照欠損
+- アプリのメイン検索 JOIN 候補件数
 
-## 推奨スキーマ
+### 6. アプリ確認
 
-以下は現行アプリの検索・集計・表示に合わせた推奨案です。  
-Access 元の列定義と完全一致を優先するのではなく、**アプリの使い方に自然な型** を優先しています。
+`.env` を `DB_BACKEND=postgres` にして `main.py` を起動します。
 
-### 1. `t_外観検査記録`
+```powershell
+.\.venv\Scripts\python.exe main.py
+```
 
-検査員別照会の明細側で使用します。
+確認する操作:
 
-| 列 | 推奨型 | 備考 |
-|---|---|---|
-| `ID` | `bigserial` | 主キー |
-| `検査員ID` | `varchar(4)` | 検査員マスタ参照キー |
-| `生産ロットID` | `varchar(7)` | ロット識別子 |
-| `工程NO` | `integer` または `varchar(2)` | 現行の工程表示に合わせて要確認 |
-| `日付` | `date` | 検索条件は日付単位 |
-| `時刻` | `time` | `1899/12/30` 由来の時刻値を吸収しやすい |
-| `品番` | `varchar(30)` | 表示・検索用 |
-| `品名` | `varchar(30)` | 表示用 |
-| `客先` | `varchar(25)` | 表示用 |
-| `数量` | `integer` | 数値型 |
-| `更新フラグ` | `varchar(1)` | 既存互換用。要件次第で廃止可 |
-| `集計除外フラグ` | `boolean` | UI では非表示だが、元データ保持用 |
+- アプリ起動
+- 検査員候補の表示
+- 検査員別照会
+- メイン検索の日付範囲検索
+- 品番検索
+- 生産ロットID別集計
+- 工程条件検索
+- Excel 出力
 
-推奨インデックス:
+## 切り戻し
 
-- `(検査員ID, 日付, 時刻)`
-- `(日付)`
-- `(生産ロットID)`
-- `(品番)`
+問題があれば `.env` を Access に戻します。
 
-### 2. `t_外観検査集計`
+```env
+DB_BACKEND=access
+ACCESS_DB_PATH=\\192.168.1.200\共有\品質保証課\外観検査記録\外観検査記録照会.accdb
+POSTGRES_CONNECTION_URL=postgresql://postgres:password@192.168.1.120:5432/inspection_records_search
+POSTGRES_SCHEMA=public
+```
 
-検査員集計、検査員別照会の集計側、メイン検索で使用します。
+## 完全移行前の状態
 
-| 列 | 推奨型 | 備考 |
-|---|---|---|
-| `ID` | `bigserial` | 主キー |
-| `検査員ID` | `varchar(4)` | 検査員マスタ参照キー |
-| `日付` | `date` | 表示も日付単位 |
-| `生産ロットID` | `varchar(7)` | ロット識別子 |
-| `品番` | `varchar(30)` | 検索対象 |
-| `品名` | `varchar(30)` | 表示対象 |
-| `工程NO` | `integer` または `varchar(2)` | 工程マスタと対応 |
-| `数量` | `integer` | 表示対象 |
-| `作業時間` | `integer` | 表示対象 |
-| `集計除外フラグ` | `boolean` | 現行 UI では非表示 |
+現時点では PostgreSQL への検証投入とアプリ確認まで完了しています。完全移行はまだ実施していません。
 
-推奨インデックス:
+完全移行時は Access の更新を止め、バックアップ後に `--apply-schema --truncate --indexes --constraints` で最新データを一括再投入します。
 
-- `(日付, 品番)`
-- `(検査員ID, 日付)`
-- `(生産ロットID)`
-- `(工程NO)`
+## 本番移行を依頼するときの指示例
 
-### 3. `t_工程マスタ`
-
-工程凡例と工程選択の元データです。  
-現行 UI では `15：バリ取り` のように `工程NO` と `工程名` を組み合わせて表示しています。
-
-| 列 | 推奨型 | 備考 |
-|---|---|---|
-| `工程NO` | `integer` | 主キー候補 |
-| `工程名` | `varchar(10)` | 表示名 |
-
-推奨制約:
-
-- `PRIMARY KEY (工程NO)`
-
-### 4. `t_数値検査員マスタ`
-
-検査員集計の補助参照先です。
-
-| 列 | 推奨型 | 備考 |
-|---|---|---|
-| `検査員ID` | `varchar(4)` | 参照キー |
-| `検査員名` | `varchar(5)` | 表示用 |
-| `区別` | `varchar(5)` | 担当など |
-| `表示フラグ` | `boolean` | 表示可否 |
-
-### 5. `t_数値検査記録`
-
-メイン検索で `t_外観検査集計` と JOIN されます。
-
-| 列 | 推奨型 | 備考 |
-|---|---|---|
-| `ID` | `bigserial` | 主キー |
-| `日付時刻` | `timestamp` | 1 行の検査記録時刻 |
-| `生産ロットID` | `varchar(7)` | JOIN キー |
-| `検査員ID` | `varchar(4)` | JOIN キー |
-| `工程名` | `varchar(30)` | 数値検査側の工程表示 |
-| `号機` | `varchar(5)` | 補助情報 |
-
-### 6. `t_検査員マスタ`
-
-UI の検査員候補一覧に使います。
-
-| 列 | 推奨型 | 備考 |
-|---|---|---|
-| `検査員ID` | `varchar(4)` | 主キー候補 |
-| `検査員名` | `varchar(10)` | 表示名 |
-| `表示位置` | `varchar(3)` | 並び順に利用される可能性あり |
-| `チーム` | `varchar(1)` | 補助属性 |
-| `ふりがな` | `varchar(1)` | 補助属性 |
-
-### 7. `t_現品票検索用`
-
-ロット系の元データです。  
-現行アプリでは `Q_生産ロット集計` を経由して使うことが多いと考えられます。
-
-| 列 | 推奨型 | 備考 |
-|---|---|---|
-| `生産ロットID` | `varchar(7)` | 主検索キー |
-| `号機` | `varchar(5)` | 補助属性 |
-| `品番` | `varchar(30)` | 検索対象 |
-| `品名` | `varchar(30)` | 表示対象 |
-| `客先` | `varchar(30)` | 表示対象 |
-| `指示日` | `date` または `timestamp` | 実データに合わせて確定 |
-| `数量` | `integer` | 表示対象 |
-
----
-
-## ビュー / 集計の扱い
-
-Access の `Q_生産ロットまとめ` と `Q_生産ロット集計` は、PostgreSQL では `VIEW` として再実装するのが自然です。
-
-移行時の考え方:
-
-- まずは Access で返していた列順と列名を維持する
-- 画面表示に必要な列だけを最小構成で作る
-- 将来の最適化は、ビューを分けてから見直す
-
-現行のロット集計画面は、検索条件に `品番` と `工程` を使います。  
-そのため、PostgreSQL 側でも `工程NO` と `工程名` の対応が取りやすいビュー設計にしておくと、UI の改修を小さくできます。
-
----
-
-## 現行コードから見た移行ポイント
-
-### 1. repository の切り替え
-
-`src/inspection_records_search/infrastructure/repository_factory.py` で backend を選んでいます。  
-現時点では `postgres` を選んでもスタブが返るため、PostgreSQL 実装を差し込む場所は明確です。
-
-### 2. 日付・時刻の表示
-
-`webview_app.py` 側では、Access の `1899/12/30 HH:MM` 形式を時刻として表示しています。  
-PostgreSQL 移行後は次のどちらかに寄せるのが安全です。
-
-- `時刻` を `time` 型にする
-- 既存の timestamp を維持しつつ、UI 側で時刻だけを表示する
-
-初回移行では、**表示結果を変えないこと** を優先してください。
-
-### 3. 工程の扱い
-
-現行 UI は工程凡例を `工程NO：工程名` で表示します。  
-PostgreSQL 側でも工程コードと工程名の両方を持たせると、画面・検索・帳票の互換性を保ちやすくなります。
-
-### 4. エクスポート
-
-`services/export_service.py` は `openpyxl` で `.xlsx` を出力しています。  
-DB を PostgreSQL に変えても、出力ロジック自体はほぼそのまま使えます。
-
----
-
-## 推奨インデックス
-
-初回移行でまず入れたいもの:
-
-- `t_外観検査記録(検査員ID, 日付, 時刻)`
-- `t_外観検査記録(生産ロットID)`
-- `t_外観検査集計(検査員ID, 日付)`
-- `t_外観検査集計(日付, 品番)`
-- `t_外観検査集計(生産ロットID)`
-- `t_検査員マスタ(検査員ID)`
-- `t_工程マスタ(工程NO)`
-
-必要に応じて追加を検討するもの:
-
-- `品番`
-- `客先`
-- `品名`
-- `表示位置`
-- `工程名`
-
----
-
-## 未確認事項
-
-以下は Access 実ファイルをさらに調査しないと確定できません。
-
-- `t_外観検査記録` と `t_外観検査集計` の厳密な主キー
-- `工程NO` が数値型で確定してよいかどうか
-- `指示日` を `date` とみなしてよいかどうか
-- `更新フラグ` の実際の利用有無
-- `Q_生産ロットまとめ` と `Q_生産ロット集計` の完全な SQL
-- PostgreSQL での同等の外部キー関係
-
----
-
-## 初回移行の優先順位
-
-1. `t_外観検査記録`
-2. `t_外観検査集計`
-3. `t_工程マスタ`
-4. `t_検査員マスタ`
-5. `t_数値検査員マスタ`
-6. `t_数値検査記録`
-7. `t_現品票検索用`
-8. `Q_生産ロットまとめ` / `Q_生産ロット集計`
-
----
-
-## まとめ
-
-現行アプリは「検索」「集計」「Excel 出力」の 3 本柱で動いており、DB 参照先はかなり限定されています。  
-そのため、PostgreSQL 移行では次を守ると影響を小さくできます。
-
-- 日本語の物理名を維持する
-- 日付と時刻を PostgreSQL 側で自然な型に寄せる
-- 工程は `工程NO` と `工程名` を両方保持する
-- 旧 Access の一時テーブルは必要最小限だけ残す
-- 現行 UI の表示結果を変えない
-
+```text
+PostgreSQL本番移行を実行してください。
+手順は docs/postgresql-migration.md と database/postgresql/migration_notes.md に従ってください。
+実行前に dry-run を行い、件数を確認してから --apply-schema --truncate --indexes --constraints で本投入してください。
+投入後、020_validation.sql を実行し、結果を migration_notes.md に記録してください。
+アプリ確認は DB_BACKEND=postgres に切り替えて main.py から実施してください。
+```

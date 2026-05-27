@@ -1,0 +1,1234 @@
+{
+  "database_path": "\\\\192.168.1.200\\共有\\品質保証課\\外観検査記録\\外観検査記録照会.accdb",
+  "driver_used": "Microsoft Access Driver (*.mdb, *.accdb)",
+  "tables": [
+    {
+      "name": "t_外観検査記録",
+      "table_type": "SYNONYM",
+      "row_count": 66493,
+      "row_count_error": null,
+      "primary_key": [],
+      "columns": [
+        {
+          "name": "ID",
+          "access_type": "COUNTER",
+          "sql_data_type": 4,
+          "column_size": 10,
+          "decimal_digits": 0,
+          "nullable": false,
+          "postgres_type_hint": "BIGSERIAL"
+        },
+        {
+          "name": "検査員ID",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 4,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(4)"
+        },
+        {
+          "name": "生産ロットID",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 7,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(7)"
+        },
+        {
+          "name": "工程NO",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 2,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(2)"
+        },
+        {
+          "name": "日付",
+          "access_type": "DATETIME",
+          "sql_data_type": 9,
+          "column_size": 19,
+          "decimal_digits": 0,
+          "nullable": true,
+          "postgres_type_hint": "TIMESTAMP"
+        },
+        {
+          "name": "時刻",
+          "access_type": "DATETIME",
+          "sql_data_type": 9,
+          "column_size": 19,
+          "decimal_digits": 0,
+          "nullable": true,
+          "postgres_type_hint": "TIMESTAMP"
+        },
+        {
+          "name": "品番",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 30,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(30)"
+        },
+        {
+          "name": "品名",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 30,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(30)"
+        },
+        {
+          "name": "客先",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 25,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(25)"
+        },
+        {
+          "name": "数量",
+          "access_type": "INTEGER",
+          "sql_data_type": 4,
+          "column_size": 10,
+          "decimal_digits": 0,
+          "nullable": true,
+          "postgres_type_hint": "INTEGER"
+        },
+        {
+          "name": "更新フラグ",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 1,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(1)"
+        },
+        {
+          "name": "集計除外フラグ",
+          "access_type": "BIT",
+          "sql_data_type": -7,
+          "column_size": 1,
+          "decimal_digits": 0,
+          "nullable": false,
+          "postgres_type_hint": "BOOLEAN"
+        }
+      ],
+      "indexes": [],
+      "sample_headers": [
+        "ID",
+        "検査員ID",
+        "生産ロットID",
+        "工程NO",
+        "日付",
+        "時刻",
+        "品番",
+        "品名",
+        "客先",
+        "数量",
+        "更新フラグ",
+        "集計除外フラグ"
+      ],
+      "sample_rows": [
+        [
+          225708,
+          "V020",
+          "P129606",
+          "4",
+          "2025-01-06T00:00:00",
+          "1899-12-30T07:55:00",
+          "08131-01010",
+          "ﾄﾞﾗｲﾊﾞ",
+          "不二工機",
+          3083,
+          null,
+          false
+        ],
+        [
+          225709,
+          "V053",
+          "P129605",
+          "4",
+          "2025-01-06T00:00:00",
+          "1899-12-30T07:59:00",
+          "08131-01010",
+          "ﾄﾞﾗｲﾊﾞ",
+          "不二工機",
+          3216,
+          null,
+          false
+        ],
+        [
+          225710,
+          "V065",
+          "P129390",
+          "4",
+          "2025-01-06T00:00:00",
+          "1899-12-30T07:59:00",
+          "99759-00022",
+          "シャフトB",
+          "三協",
+          4886,
+          null,
+          false
+        ],
+        [
+          225712,
+          "V011",
+          "E014893",
+          "3",
+          "2025-01-06T00:00:00",
+          "1899-12-30T08:03:00",
+          "3W4PR3289",
+          "ｲﾝｻｰﾄﾌﾞｯｼｭ",
+          "クラウン精密",
+          2502,
+          null,
+          false
+        ],
+        [
+          225713,
+          "V004",
+          "E014894",
+          "3",
+          "2025-01-06T00:00:00",
+          "1899-12-30T08:03:00",
+          "3W4PR3289",
+          "ｲﾝｻｰﾄﾌﾞｯｼｭ",
+          "クラウン精密",
+          2500,
+          null,
+          false
+        ]
+      ],
+      "column_stats": [
+        {
+          "column": "ID",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "検査員ID",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "生産ロットID",
+          "null_count": 13745,
+          "null_rate_pct": 20.7,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "工程NO",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "日付",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "時刻",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "品番",
+          "null_count": 9157,
+          "null_rate_pct": 13.8,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "品名",
+          "null_count": 9157,
+          "null_rate_pct": 13.8,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "客先",
+          "null_count": 9157,
+          "null_rate_pct": 13.8,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "数量",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "更新フラグ",
+          "null_count": 66494,
+          "null_rate_pct": 100.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "集計除外フラグ",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        }
+      ]
+    },
+    {
+      "name": "t_外観検査集計",
+      "table_type": "SYNONYM",
+      "row_count": 49684,
+      "row_count_error": null,
+      "primary_key": [],
+      "columns": [
+        {
+          "name": "ID",
+          "access_type": "COUNTER",
+          "sql_data_type": 4,
+          "column_size": 10,
+          "decimal_digits": 0,
+          "nullable": false,
+          "postgres_type_hint": "BIGSERIAL"
+        },
+        {
+          "name": "検査員ID",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 4,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(4)"
+        },
+        {
+          "name": "日付",
+          "access_type": "DATETIME",
+          "sql_data_type": 9,
+          "column_size": 19,
+          "decimal_digits": 0,
+          "nullable": true,
+          "postgres_type_hint": "TIMESTAMP"
+        },
+        {
+          "name": "生産ロットID",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 7,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(7)"
+        },
+        {
+          "name": "品番",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 30,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(30)"
+        },
+        {
+          "name": "品名",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 30,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(30)"
+        },
+        {
+          "name": "工程NO",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 2,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(2)"
+        },
+        {
+          "name": "数量",
+          "access_type": "INTEGER",
+          "sql_data_type": 4,
+          "column_size": 10,
+          "decimal_digits": 0,
+          "nullable": true,
+          "postgres_type_hint": "INTEGER"
+        },
+        {
+          "name": "作業時間",
+          "access_type": "INTEGER",
+          "sql_data_type": 4,
+          "column_size": 10,
+          "decimal_digits": 0,
+          "nullable": true,
+          "postgres_type_hint": "INTEGER"
+        },
+        {
+          "name": "集計除外フラグ",
+          "access_type": "BIT",
+          "sql_data_type": -7,
+          "column_size": 1,
+          "decimal_digits": 0,
+          "nullable": false,
+          "postgres_type_hint": "BOOLEAN"
+        }
+      ],
+      "indexes": [],
+      "sample_headers": [
+        "ID",
+        "検査員ID",
+        "日付",
+        "生産ロットID",
+        "品番",
+        "品名",
+        "工程NO",
+        "数量",
+        "作業時間",
+        "集計除外フラグ"
+      ],
+      "sample_rows": [
+        [
+          177965,
+          "V053",
+          "2025-01-06T00:00:00",
+          "P129605",
+          "08131-01010",
+          "ﾄﾞﾗｲﾊﾞ",
+          "4",
+          3216,
+          6,
+          false
+        ],
+        [
+          177966,
+          "V039",
+          "2025-01-06T00:00:00",
+          "P129719",
+          "08131-01010",
+          "ﾄﾞﾗｲﾊﾞ",
+          "4",
+          3208,
+          66,
+          false
+        ],
+        [
+          177967,
+          "V053",
+          "2025-01-06T00:00:00",
+          "P129621",
+          "08131-01010",
+          "ﾄﾞﾗｲﾊﾞ",
+          "4",
+          3468,
+          87,
+          false
+        ],
+        [
+          177968,
+          "V020",
+          "2025-01-06T00:00:00",
+          "P129606",
+          "08131-01010",
+          "ﾄﾞﾗｲﾊﾞ",
+          "4",
+          3083,
+          105,
+          false
+        ],
+        [
+          177969,
+          "V063",
+          "2025-01-06T00:00:00",
+          "P129504",
+          "99759-00022",
+          "シャフトB",
+          "4",
+          3783,
+          80,
+          false
+        ]
+      ],
+      "column_stats": [
+        {
+          "column": "ID",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "検査員ID",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "日付",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "生産ロットID",
+          "null_count": 134,
+          "null_rate_pct": 0.3,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "品番",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "品名",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "工程NO",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "数量",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "作業時間",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "集計除外フラグ",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        }
+      ]
+    },
+    {
+      "name": "t_工程マスタ",
+      "table_type": "SYNONYM",
+      "row_count": 10,
+      "row_count_error": null,
+      "primary_key": [],
+      "columns": [
+        {
+          "name": "工程NO",
+          "access_type": "INTEGER",
+          "sql_data_type": 4,
+          "column_size": 10,
+          "decimal_digits": 0,
+          "nullable": true,
+          "postgres_type_hint": "INTEGER"
+        },
+        {
+          "name": "工程名",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 10,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(10)"
+        }
+      ],
+      "indexes": [],
+      "sample_headers": [
+        "工程NO",
+        "工程名"
+      ],
+      "sample_rows": [
+        [
+          15,
+          "バリ取り"
+        ],
+        [
+          16,
+          "ゲージ検査"
+        ],
+        [
+          17,
+          "エアー吹き"
+        ],
+        [
+          18,
+          "切粉除去"
+        ],
+        [
+          19,
+          "返品再検査"
+        ]
+      ],
+      "column_stats": [
+        {
+          "column": "工程NO",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "工程名",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        }
+      ]
+    },
+    {
+      "name": "t_数値検査員マスタ",
+      "table_type": "SYNONYM",
+      "row_count": 14,
+      "row_count_error": null,
+      "primary_key": [],
+      "columns": [
+        {
+          "name": "検査員ID",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 4,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(4)"
+        },
+        {
+          "name": "検査員名",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 5,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(5)"
+        },
+        {
+          "name": "区別",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 5,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(5)"
+        },
+        {
+          "name": "表示フラグ",
+          "access_type": "BIT",
+          "sql_data_type": -7,
+          "column_size": 1,
+          "decimal_digits": 0,
+          "nullable": false,
+          "postgres_type_hint": "BOOLEAN"
+        }
+      ],
+      "indexes": [],
+      "sample_headers": [
+        "検査員ID",
+        "検査員名",
+        "区別",
+        "表示フラグ"
+      ],
+      "sample_rows": [
+        [
+          "0",
+          "旧０",
+          null,
+          false
+        ],
+        [
+          "1",
+          "旧１",
+          null,
+          false
+        ],
+        [
+          "11",
+          "千葉かおる",
+          "担当",
+          true
+        ],
+        [
+          "12",
+          "山中かおり",
+          "担当",
+          true
+        ],
+        [
+          "13",
+          "新井春香",
+          "担当",
+          true
+        ]
+      ],
+      "column_stats": [
+        {
+          "column": "検査員ID",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "検査員名",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "区別",
+          "null_count": 3,
+          "null_rate_pct": 21.4,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "表示フラグ",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        }
+      ]
+    },
+    {
+      "name": "t_数値検査記録",
+      "table_type": "SYNONYM",
+      "row_count": 24943,
+      "row_count_error": null,
+      "primary_key": [],
+      "columns": [
+        {
+          "name": "ID",
+          "access_type": "COUNTER",
+          "sql_data_type": 4,
+          "column_size": 10,
+          "decimal_digits": 0,
+          "nullable": false,
+          "postgres_type_hint": "BIGSERIAL"
+        },
+        {
+          "name": "日付時刻",
+          "access_type": "DATETIME",
+          "sql_data_type": 9,
+          "column_size": 19,
+          "decimal_digits": 0,
+          "nullable": true,
+          "postgres_type_hint": "TIMESTAMP"
+        },
+        {
+          "name": "生産ロットID",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 7,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(7)"
+        },
+        {
+          "name": "検査員ID",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 4,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(4)"
+        },
+        {
+          "name": "工程名",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 30,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(30)"
+        },
+        {
+          "name": "号機",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 5,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(5)"
+        }
+      ],
+      "indexes": [],
+      "sample_headers": [
+        "ID",
+        "日付時刻",
+        "生産ロットID",
+        "検査員ID",
+        "工程名",
+        "号機"
+      ],
+      "sample_rows": [
+        [
+          117,
+          "2024-10-10T10:47:28",
+          "P126569",
+          "16",
+          "数値検査",
+          "F-6"
+        ],
+        [
+          118,
+          "2024-10-10T10:47:44",
+          "P126610",
+          "16",
+          "数値検査",
+          "F-6"
+        ],
+        [
+          119,
+          "2024-10-10T10:48:01",
+          "P126654",
+          "16",
+          "数値検査",
+          "F-6"
+        ],
+        [
+          120,
+          "2024-10-10T10:48:16",
+          "P126697",
+          "16",
+          "数値検査",
+          "F-6"
+        ],
+        [
+          121,
+          "2024-10-10T10:48:34",
+          "P126444",
+          "16",
+          "数値検査",
+          "F-6"
+        ]
+      ],
+      "column_stats": [
+        {
+          "column": "ID",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "日付時刻",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "生産ロットID",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "検査員ID",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "工程名",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "号機",
+          "null_count": 10,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        }
+      ]
+    },
+    {
+      "name": "t_検査員マスタ",
+      "table_type": "SYNONYM",
+      "row_count": 76,
+      "row_count_error": null,
+      "primary_key": [],
+      "columns": [
+        {
+          "name": "検査員ID",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 4,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(4)"
+        },
+        {
+          "name": "検査員名",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 10,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(10)"
+        },
+        {
+          "name": "表示位置",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 3,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(3)"
+        },
+        {
+          "name": "チーム",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 1,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(1)"
+        },
+        {
+          "name": "ふりがな",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 1,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(1)"
+        }
+      ],
+      "indexes": [],
+      "sample_headers": [
+        "検査員ID",
+        "検査員名",
+        "表示位置",
+        "チーム",
+        "ふりがな"
+      ],
+      "sample_rows": [
+        [
+          "V001",
+          "中",
+          null,
+          null,
+          "な"
+        ],
+        [
+          "V002",
+          "鈴木",
+          "210",
+          "A",
+          "す"
+        ],
+        [
+          "V003",
+          "吉岡",
+          null,
+          null,
+          "よ"
+        ],
+        [
+          "V004",
+          "新井(登)",
+          "28",
+          "A",
+          "あ"
+        ],
+        [
+          "V005",
+          "前森",
+          "211",
+          "A",
+          "ま"
+        ]
+      ],
+      "column_stats": [
+        {
+          "column": "検査員ID",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "検査員名",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "表示位置",
+          "null_count": 42,
+          "null_rate_pct": 55.3,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "チーム",
+          "null_count": 38,
+          "null_rate_pct": 50.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "ふりがな",
+          "null_count": 4,
+          "null_rate_pct": 5.3,
+          "unique_count": null,
+          "unique_rate_pct": null
+        }
+      ]
+    },
+    {
+      "name": "t_現品票検索用",
+      "table_type": "SYNONYM",
+      "row_count": 168837,
+      "row_count_error": null,
+      "primary_key": [],
+      "columns": [
+        {
+          "name": "生産ロットID",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 7,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(7)"
+        },
+        {
+          "name": "号機",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 5,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(5)"
+        },
+        {
+          "name": "品番",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 30,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(30)"
+        },
+        {
+          "name": "品名",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 30,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(30)"
+        },
+        {
+          "name": "客先",
+          "access_type": "VARCHAR",
+          "sql_data_type": -9,
+          "column_size": 30,
+          "decimal_digits": null,
+          "nullable": true,
+          "postgres_type_hint": "VARCHAR(30)"
+        },
+        {
+          "name": "指示日",
+          "access_type": "DATETIME",
+          "sql_data_type": 9,
+          "column_size": 19,
+          "decimal_digits": 0,
+          "nullable": true,
+          "postgres_type_hint": "TIMESTAMP"
+        },
+        {
+          "name": "数量",
+          "access_type": "INTEGER",
+          "sql_data_type": 4,
+          "column_size": 10,
+          "decimal_digits": 0,
+          "nullable": true,
+          "postgres_type_hint": "INTEGER"
+        }
+      ],
+      "indexes": [],
+      "sample_headers": [
+        "生産ロットID",
+        "号機",
+        "品番",
+        "品名",
+        "客先",
+        "指示日",
+        "数量"
+      ],
+      "sample_rows": [
+        [
+          "E000001",
+          "AN",
+          "00575532-01",
+          "カラー 8×8.16",
+          "東京鋲兼",
+          "2017-10-12T00:00:00",
+          3730
+        ],
+        [
+          "E000002",
+          "AN",
+          "00575532-01",
+          "カラー 8×8.16",
+          "東京鋲兼",
+          "2017-10-14T00:00:00",
+          1370
+        ],
+        [
+          "E000003",
+          "AN",
+          "00575532-05",
+          "カラー 8×8.14",
+          "東京鋲兼",
+          "2017-10-14T00:00:00",
+          2700
+        ],
+        [
+          "E000004",
+          "AN-1",
+          "FA用リベット",
+          "FA用リベット",
+          "イワタボルト",
+          "2017-10-14T00:00:00",
+          10000
+        ],
+        [
+          "E000005",
+          "AN-2",
+          "FA用リベット",
+          "FA用リベット",
+          "イワタボルト",
+          "2017-10-14T00:00:00",
+          10000
+        ]
+      ],
+      "column_stats": [
+        {
+          "column": "生産ロットID",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "号機",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "品番",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "品名",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "客先",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "指示日",
+          "null_count": 0,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        },
+        {
+          "column": "数量",
+          "null_count": 2,
+          "null_rate_pct": 0.0,
+          "unique_count": null,
+          "unique_rate_pct": null
+        }
+      ]
+    }
+  ],
+  "views_and_queries": [
+    {
+      "name": "Q_生産ロットまとめ",
+      "type": "VIEW"
+    },
+    {
+      "name": "Q_生産ロット集計",
+      "type": "VIEW"
+    }
+  ],
+  "relationships": [],
+  "vba_modules": [
+    {
+      "name": "Form_f_個人別照会",
+      "type": "レポートモジュール",
+      "line_count": 91,
+      "code": "Option Compare Database\r\nOption Explicit\r\n\r\n'表示ボタン\r\nPrivate Sub btnDisp_Click()\r\n    Dim strSQL As String\r\n    Dim sMsg As String\r\n    \r\n    sMsg = \"\"\r\n    If IsNull(Me.cboKensain) Then sMsg = \"検査員の指定がありません\"\r\n    If IsNull(Me.txtKaishibi) Then sMsg = \"表示開始日は必ず指定してください\"\r\n    \r\n    If sMsg <> \"\" Then\r\n        MsgBox sMsg, vbCritical + vbOKOnly, \"確認\"\r\n        Me.txtKaishibi.SetFocus\r\n        Exit Sub\r\n    End If\r\n        \r\n    strSQL = \"SELECT 検査員ID, 生産ロットID, 工程NO, 日付, 時刻, 品番, 品名, 客先 \"\r\n    strSQL = strSQL & \"FROM t_外観検査記録 \"\r\n    strSQL = strSQL & \"WHERE 検査員ID = '\" & Me.cboKensain & \"' \"\r\n    If Not IsNull(Me.txtShuryobi) Then\r\n        strSQL = strSQL & \"AND 日付 BETWEEN #\" & Me.txtKaishibi & \"# \"\r\n        strSQL = strSQL & \"AND #\" & Me.txtShuryobi & \"# \"\r\n    Else\r\n        strSQL = strSQL & \"AND 日付 = #\" & Me.txtKaishibi & \"# \"\r\n    End If\r\n    strSQL = strSQL & \"ORDER BY 日付, 時刻;\"\r\n    Me.f_個人別照会のサブフォーム1.Form.RecordSource = strSQL\r\n    \r\n    strSQL = \"SELECT 検査員ID, 生産ロットID, 工程NO, 日付, 品番, 品名, 作業時間, 数量 \"\r\n    strSQL = strSQL & \"FROM t_外観検査集計 \"\r\n    strSQL = strSQL & \"WHERE 検査員ID = '\" & Me.cboKensain & \"' \"\r\n    If Not IsNull(Me.txtShuryobi) Then\r\n        strSQL = strSQL & \"AND 日付 BETWEEN #\" & Me.txtKaishibi & \"# \"\r\n        strSQL = strSQL & \"AND #\" & Me.txtShuryobi & \"# \"\r\n    Else\r\n        strSQL = strSQL & \"AND 日付 = #\" & Me.txtKaishibi & \"# \"\r\n    End If\r\n    strSQL = strSQL & \"ORDER BY 日付, ID;\"\r\n    Me.f_個人別照会のサブフォーム2.Form.RecordSource = strSQL\r\n    \r\n    Me.Refresh\r\n    Me.txtKaishibi.SetFocus\r\n    \r\nEnd Sub\r\n\r\n'戻るボタン\r\nPrivate Sub btnToHome_Click()\r\n    DoCmd.Close acForm, \"f_個人別照会\"\r\nEnd Sub\r\n\r\n'検査員が更新された\r\nPrivate Sub cboKensain_AfterUpdate()\r\n    Me.btnDisp.SetFocus\r\nEnd Sub\r\n\r\n'フォームを開く時\r\nPrivate Sub Form_Open(Cancel As Integer)\r\n    Dim strSQL As String\r\n    \r\n    Me.f_個人別照会のサブフォーム1.Form.検査員ID.ColumnHidden = True\r\n    \r\n    Me.f_個人別照会のサブフォーム1.Form.生産ロットID.ColumnWidth = 567 * 2\r\n    Me.f_個人別照会のサブフォーム1.Form.工程NO.ColumnWidth = 567 * 1.4\r\n    Me.f_個人別照会のサブフォーム1.Form.日付.ColumnWidth = 567 * 2.3\r\n    Me.f_個人別照会のサブフォーム1.Form.時刻.ColumnWidth = 567 * 1.6\r\n    Me.f_個人別照会のサブフォーム1.Form.品番.ColumnWidth = 567 * 4.5\r\n    Me.f_個人別照会のサブフォーム1.Form.品名.ColumnWidth = 567 * 4.5\r\n    Me.f_個人別照会のサブフォーム1.Form.客先.ColumnWidth = 567 * 3\r\n\r\n    strSQL = \"SELECT 検査員ID, 生産ロットID, 工程NO, 日付, 時刻, 品番, 品名, 客先 \"\r\n    strSQL = strSQL & \"FROM t_外観検査記録 \"\r\n    strSQL = strSQL & \"WHERE 検査員ID = 'ZZZZ';\"\r\n    Me.f_個人別照会のサブフォーム1.Form.RecordSource = strSQL\r\n    \r\n    Me.f_個人別照会のサブフォーム2.Form.検査員ID.ColumnHidden = True\r\n    \r\n    Me.f_個人別照会のサブフォーム2.Form.生産ロットID.ColumnWidth = 567 * 2\r\n    Me.f_個人別照会のサブフォーム2.Form.工程NO.ColumnWidth = 567 * 1.4\r\n    Me.f_個人別照会のサブフォーム2.Form.日付.ColumnWidth = 567 * 2.3\r\n    Me.f_個人別照会のサブフォーム2.Form.品番.ColumnWidth = 567 * 4.5\r\n    Me.f_個人別照会のサブフォーム2.Form.品名.ColumnWidth = 567 * 4.5\r\n    Me.f_個人別照会のサブフォーム2.Form.作業時間.ColumnWidth = 567 * 1.6\r\n    Me.f_個人別照会のサブフォーム2.Form.数量.ColumnWidth = 567 * 1.6\r\n    \r\n    strSQL = \"SELECT 検査員ID, 生産ロットID, 工程NO, 日付, 品番, 品名, 作業時間, 数量 \"\r\n    strSQL = strSQL & \"FROM t_外観検査集計 \"\r\n    strSQL = strSQL & \"WHERE 検査員ID = 'ZZZZ';\"\r\n    Me.f_個人別照会のサブフォーム2.Form.RecordSource = strSQL\r\nEnd Sub"
+    },
+    {
+      "name": "Form_f_表示",
+      "type": "レポートモジュール",
+      "line_count": 200,
+      "code": "Option Compare Database\r\nOption Explicit\r\n\r\n'表示ボタン\r\nPrivate Sub btnDisp_Click()\r\n    Dim strSQL As String\r\n    \r\n    If IsNull(Me.txtKaishibi) Then\r\n        MsgBox \"開始日は必ず入力してください\", vbCritical + vbOKOnly, \"確認\"\r\n        Me.txtKaishibi.SetFocus\r\n        Exit Sub\r\n    End If\r\n    \r\n    strSQL = \"SELECT t_外観検査集計.検査員ID, t_検査員マスタ.検査員名, t_外観検査集計.日付, t_外観検査集計.生産ロットID, \"\r\n    strSQL = strSQL & \"t_外観検査集計.品番, 品名, t_外観検査集計.工程NO, t_外観検査集計.数量, t_外観検査集計.作業時間, t_外観検査集計.集計除外フラグ, \"\r\n    strSQL = strSQL & \"t_数値検査員マスタ.検査員名 AS 数値検査員名 \"\r\n    strSQL = strSQL & \"FROM ((t_外観検査集計 LEFT JOIN t_検査員マスタ ON t_外観検査集計.検査員ID = t_検査員マスタ.検査員ID) \"\r\n    strSQL = strSQL & \"LEFT JOIN t_数値検査記録 ON t_外観検査集計.生産ロットID = t_数値検査記録.生産ロットID) \"\r\n    strSQL = strSQL & \"LEFT JOIN t_数値検査員マスタ ON t_数値検査記録.検査員ID = t_数値検査員マスタ.検査員ID \"\r\n    '日付指定\r\n    If Not IsNull(Me.txtKaishibi) And Not IsNull(Me.txtShuryobi) Then       '両方とも指定あり\r\n        strSQL = strSQL & \"WHERE 日付 BETWEEN #\" & Me.txtKaishibi & \"# AND #\" & Me.txtShuryobi & \"#\"\r\n    Else\r\n        strSQL = strSQL & \"WHERE 日付 = #\" & Me.txtKaishibi & \"#\"\r\n    End If\r\n    '品番指定\r\n    If Not IsNull(Me.txtHinban) Then\r\n        strSQL = strSQL & \" AND 品番 = '\" & Me.txtHinban & \"'\"\r\n    End If\r\n    strSQL = strSQL & \" ORDER BY t_外観検査集計.日付, t_外観検査集計.検査員ID, t_外観検査集計.ID;\"\r\n    \r\n    Me.f_表示のサブフォーム1.Form.RecordSource = strSQL\r\n    \r\n    Me.Refresh\r\n    \r\n    Me.txtKaishibi.SetFocus\r\nEnd Sub\r\n\r\n'生産ロットID別集計表示ボタン\r\nPrivate Sub btnDisp2_Click()\r\n    Dim strSQL As String\r\n    \r\n    'サブフォーム2のデータを表示\r\n    strSQL = strSQL & \"SELECT 生産ロットID, 工程NO, 品番, \"\r\n    strSQL = strSQL & \"品名, 数量, 作業時間の合計 \"\r\n    strSQL = strSQL & \"FROM Q_生産ロット集計 \"\r\n    \r\n    '品番条件をセット\r\n    If Not IsNull(Me.txtHinban2) Then\r\n        strSQL = strSQL & \"WHERE 品番 = '\" & Me.txtHinban2 & \"' \"\r\n    End If\r\n    \r\n    '工程No条件をセット\r\n    If Not IsNull(Me.txtKoutei) Then\r\n        If InStr(1, strSQL, \"WHERE\", vbTextCompare) > 0 Then            '既にWHERE句あり\r\n            strSQL = strSQL & \"AND 工程NO = '\" & Me.txtKoutei & \"' \"\r\n        Else\r\n            strSQL = strSQL & \"WHERE 工程NO = '\" & Me.txtKoutei & \"' \"\r\n        End If\r\n    End If\r\n    \r\n    strSQL = strSQL & \"ORDER BY 生産ロットID, 工程NO;\"\r\n    \r\n    Me.f_表示のサブフォーム2.Form.RecordSource = strSQL\r\n    \r\n    Me.Refresh\r\n    \r\n    Me.txtHinban2.SetFocus\r\nEnd Sub\r\n\r\n'エクスポートボタン\r\nPrivate Sub btnExport_Click()\r\n    Call ToExcelExport(Me.f_表示のサブフォーム1.Form.RecordsetClone, \"外観検査集計.xlsx\")\r\nEnd Sub\r\n\r\n'エクスポートボタン2\r\nPrivate Sub btnExport2_Click()\r\n    Call ToExcelExport(Me.f_表示のサブフォーム2.Form.RecordsetClone, \"外観検査ロット別集計.xlsx\")\r\nEnd Sub\r\n\r\n'Excelへエクスポート\r\nPrivate Sub ToExcelExport(objRS As Object, sFname As String)\r\n    Dim xls As Object           'Excel.Applicationを代入するオブジェクト変数\r\n    Dim wkb As Object           'Excel.Wookbookを代入するオブジェクト変数\r\n    Dim rst As DAO.Recordset    '現在のレコードセットを入れる変数\r\n    Dim idx As Long\r\n    Dim sPath As String\r\n    \r\n    If MsgBox(\"Excelデータへのエクスポートを行います。実行しますか？\", vbQuestion + vbYesNo, \"確認\") <> vbYes Then Exit Sub\r\n\r\n    On Error GoTo Err_ToExcelExport\r\n    \r\n    DoCmd.SetWarnings False\r\n\r\n    Set rst = Nothing                                               'データリストの初期化\r\n    Set rst = objRS     'フォームのレコードセットのクローンを代入\r\n\r\n    'レコードが存在しない場合、処理を中止\r\n    If rst.BOF = True And rst.EOF = True Then\r\n        MsgBox \"出力出来るデータがありません。\", vbOKOnly + vbExclamation, \"出力不可\"\r\n        GoTo Exit_ToExcelExport\r\n    End If\r\n\r\n    'レコードが存在する場合、Excelに出力\r\n    rst.MoveFirst                                   'レコードセットの最初に移動\r\n    \r\n    Set xls = CreateObject(\"Excel.Application\")     'Excelファイルを内部的に作成\r\n    Set wkb = xls.Workbooks.Add()                   '作成されたExcelファイルにワークブックを追加\r\n\r\n    '追加されたワークブックに、レコードセットのデータをコピー\r\n    With wkb.Worksheets(1)\r\n        For idx = 1 To rst.Fields.Count                     'Excel側のヘッダ部\r\n            .Cells(1, idx).Value = rst.Fields(idx - 1).Name\r\n        Next\r\n        .Range(\"A2\").CopyFromRecordset Data:=rst            'データ部分\r\n    End With\r\n\r\n    'Excelを保存\r\n    sPath = Application.CurrentProject.Path                         'Accressと同じフォルダ\r\n    xls.Application.DisplayAlerts = False                           '上書き確認メッセージを出さない\r\n    wkb.Close SaveChanges:=True, FileName:=sPath & \"\\\" & sFname     '保存\r\n    \r\n    'メモリに展開されたExcel用オブジェクト変数を開放\r\n    Set wkb = Nothing\r\n    Set xls = Nothing\r\n\r\n    DoCmd.SetWarnings True\r\n    \r\n    MsgBox \"Excelファイルへ保存しました( \" & sFname & \" )\", vbInformation + vbOKOnly, \"確認\"\r\n\r\nExit_ToExcelExport:\r\n    objRS.Close               'レコードセットを閉じる\r\n    Set objRS = Nothing\r\n    Exit Sub\r\n\r\nErr_ToExcelExport:\r\n    MsgBox Err.Description\r\n    Resume Exit_ToExcelExport\r\nEnd Sub\r\n\r\n'個人別データ照会ボタン\r\nPrivate Sub btnKojinbetu_Click()\r\n    DoCmd.OpenForm \"f_個人別照会\", acNormal\r\nEnd Sub\r\n\r\n'リフレッシュボタン\r\nPrivate Sub btnRefresh_Click()\r\n    Me.Refresh\r\nEnd Sub\r\n\r\n'戻るボタン\r\nPrivate Sub btnToHome_Click()\r\n    DoCmd.Quit\r\nEnd Sub\r\n\r\n'フォームを開く時\r\nPrivate Sub Form_Open(Cancel As Integer)\r\n    Dim strSQL As String\r\n    \r\n    'サブフォーム1、列幅設定\r\n    Me.f_表示のサブフォーム1.Form.ID.ColumnHidden = True\r\n    \r\n    Me.f_表示のサブフォーム1.Form.検査員ID.ColumnWidth = 567 * 2.2\r\n    Me.f_表示のサブフォーム1.Form.検査員名.ColumnWidth = 567 * 2.1\r\n    Me.f_表示のサブフォーム1.Form.日付.ColumnWidth = 567 * 2.3\r\n    Me.f_表示のサブフォーム1.Form.生産ロットID.ColumnWidth = 567 * 2.6\r\n    Me.f_表示のサブフォーム1.Form.品番.ColumnWidth = 567 * 4.9\r\n    Me.f_表示のサブフォーム1.Form.品名.ColumnWidth = 567 * 4.9\r\n    Me.f_表示のサブフォーム1.Form.工程NO.ColumnWidth = 567 * 1.4\r\n    Me.f_表示のサブフォーム1.Form.数量.ColumnWidth = 567 * 2.2\r\n    Me.f_表示のサブフォーム1.Form.作業時間.ColumnWidth = 567 * 2.2\r\n    Me.f_表示のサブフォーム1.Form.集計除外フラグ.ColumnHidden = True\r\n    Me.f_表示のサブフォーム1.Form.数値検査員名.ColumnWidth = 567 * 2.9\r\n\r\n    'サブフォーム1のデータを表示しない(存在しない検査員IDを抽出)\r\n    strSQL = \"SELECT t_外観検査集計.検査員ID, t_検査員マスタ.検査員名, t_外観検査集計.日付, t_外観検査集計.生産ロットID, \"\r\n    strSQL = strSQL & \"t_外観検査集計.品番, 品名, t_外観検査集計.工程NO, t_外観検査集計.数量, t_外観検査集計.作業時間, t_外観検査集計.集計除外フラグ, \"\r\n    strSQL = strSQL & \"t_数値検査員マスタ.検査員名 AS 数値検査員名 \"\r\n    strSQL = strSQL & \"FROM ((t_外観検査集計 LEFT JOIN t_検査員マスタ ON t_外観検査集計.検査員ID = t_検査員マスタ.検査員ID) \"\r\n    strSQL = strSQL & \"LEFT JOIN t_数値検査記録 ON t_外観検査集計.生産ロットID = t_数値検査記録.生産ロットID) \"\r\n    strSQL = strSQL & \"LEFT JOIN t_数値検査員マスタ ON t_数値検査記録.検査員ID = t_数値検査員マスタ.検査員ID \"\r\n    strSQL = strSQL & \"WHERE t_外観検査集計.検査員ID = 'ZZZZ';\"\r\n    Me.f_表示のサブフォーム1.Form.RecordSource = strSQL\r\n    \r\n    'サブフォーム2、列幅設定\r\n    Me.f_表示のサブフォーム2.Form.生産ロットID.ColumnWidth = 567 * 2.6\r\n    Me.f_表示のサブフォーム2.Form.品番.ColumnWidth = 567 * 5\r\n    Me.f_表示のサブフォーム2.Form.品名.ColumnWidth = 567 * 5\r\n    Me.f_表示のサブフォーム2.Form.工程NO.ColumnWidth = 567 * 1.4\r\n    Me.f_表示のサブフォーム2.Form.数量.ColumnWidth = 567 * 2.2\r\n    Me.f_表示のサブフォーム2.Form.作業時間の合計.ColumnWidth = 567 * 2.2\r\n    \r\n    'サブフォーム2のデータを表示しない(存在しない生産ロットIDを抽出)\r\n    strSQL = \"SELECT Q_生産ロット集計.生産ロットID, Q_生産ロット集計.工程NO, Q_生産ロット集計.品番, \"\r\n    strSQL = strSQL & \"Q_生産ロット集計.品名, Q_生産ロット集計.数量, Q_生産ロット集計.作業時間の合計 \"\r\n    strSQL = strSQL & \"FROM Q_生産ロット集計 \"\r\n    strSQL = strSQL & \"WHERE Q_生産ロット集計.生産ロットID = 'Z999999';\"\r\n    Me.f_表示のサブフォーム2.Form.RecordSource = strSQL\r\n    \r\nEnd Sub"
+    }
+  ],
+  "warnings": [
+    "FK 取得スキップ: t_外観検査記録 — ('IM001', '[IM001] [Microsoft][ODBC Driver Manager] ドライバーはこの関数をサポートしていません。 (0) (SQLForeignKeys)')",
+    "FK 取得スキップ: t_外観検査集計 — ('IM001', '[IM001] [Microsoft][ODBC Driver Manager] ドライバーはこの関数をサポートしていません。 (0) (SQLForeignKeys)')",
+    "FK 取得スキップ: t_工程マスタ — ('IM001', '[IM001] [Microsoft][ODBC Driver Manager] ドライバーはこの関数をサポートしていません。 (0) (SQLForeignKeys)')",
+    "FK 取得スキップ: t_数値検査員マスタ — ('IM001', '[IM001] [Microsoft][ODBC Driver Manager] ドライバーはこの関数をサポートしていません。 (0) (SQLForeignKeys)')",
+    "FK 取得スキップ: t_数値検査記録 — ('IM001', '[IM001] [Microsoft][ODBC Driver Manager] ドライバーはこの関数をサポートしていません。 (0) (SQLForeignKeys)')",
+    "FK 取得スキップ: t_検査員マスタ — ('IM001', '[IM001] [Microsoft][ODBC Driver Manager] ドライバーはこの関数をサポートしていません。 (0) (SQLForeignKeys)')",
+    "FK 取得スキップ: t_現品票検索用 — ('IM001', '[IM001] [Microsoft][ODBC Driver Manager] ドライバーはこの関数をサポートしていません。 (0) (SQLForeignKeys)')"
+  ]
+}
