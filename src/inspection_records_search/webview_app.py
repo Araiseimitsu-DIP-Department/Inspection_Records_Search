@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import datetime as dt
+import base64
 import logging
 from dataclasses import dataclass
 from decimal import Decimal
@@ -490,4 +491,16 @@ def load_index_html() -> str:
     from inspection_records_search.config import get_web_index_html_path
 
     index_path = get_web_index_html_path()
-    return index_path.read_text(encoding="utf-8")
+    html = index_path.read_text(encoding="utf-8")
+
+    # サイドバーロゴをHTMLへ埋め込み、実行環境の相対パス差異を回避する
+    logo_path = index_path.parents[3] / "DESIGN" / "arai_logo.png"
+    if logo_path.exists():
+        logo_bytes = logo_path.read_bytes()
+        logo_data_uri = (
+            "data:image/png;base64,"
+            f"{base64.b64encode(logo_bytes).decode('ascii')}"
+        )
+    else:
+        logo_data_uri = ""
+    return html.replace("__ARAI_LOGO_SRC__", logo_data_uri)

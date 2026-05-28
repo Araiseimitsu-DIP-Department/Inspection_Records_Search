@@ -171,3 +171,17 @@ python -m venv .venv
 - 画面は `pywebview` の Edge WebView2 バックエンドを使います。実行PCに WebView2 ランタイムが必要です。
 - 配布版は onefile のため、実行時に別途 Python を入れる必要はありません。
 - Access / ODBC / PostgreSQL の接続可否は利用環境に依存します。
+
+## UIデザイン反映（DESIGN準拠）
+
+- `DESIGN/DESIGN.md` を基準に、`src/inspection_records_search/web/index.html` のデザインを統一しました。
+- 業務ロジック・DB処理・画面遷移ロジックは変更していません（見た目のみ変更）。
+- サイドバーは以下仕様に合わせています。
+  - 通常幅 `15rem`、折りたたみ幅 `4rem`
+  - `width` トランジションによる開閉
+  - 背景 `surface`、右境界 `border-border`
+  - ヘッダーに画面名と折りたたみボタンを配置
+  - 折りたたみボタン常時表示、`aria-label` / `title` を開閉状態に応じて更新
+  - 折りたたみ時はナビアイコン中央寄せ、展開時はアイコン＋ラベル横並び
+  - アクティブ項目は `accent-soft` 背景 + アイコン `accent`
+  - 非アクティブ項目は `text-secondary`、ホバー時は `surface-secondary`

@@ -18,6 +18,11 @@ def main() -> int:
     if not png.is_file():
         print(f"Error: PNG not found: {png}", file=sys.stderr)
         return 1
+    arai_logo = root / "DESIGN" / "arai_logo.png"
+    if not arai_logo.is_file():
+        print(f"Error: Logo PNG not found: {arai_logo}", file=sys.stderr)
+        return 1
+    arai_logo_wt = root / "DESIGN" / "arai_logo_wt.png"
 
     def run(args: list[str | Path]) -> None:
         result = subprocess.run(
@@ -44,7 +49,12 @@ def main() -> int:
         f"{ico};docs",
         "--add-data",
         f"{root / 'src' / 'inspection_records_search' / 'web' / 'index.html'};src/inspection_records_search/web",
+        # サイドバー用ロゴを実行ファイルに同梱する
+        "--add-data",
+        f"{arai_logo};DESIGN",
     ]
+    if arai_logo_wt.is_file():
+        add_data.extend(["--add-data", f"{arai_logo_wt};DESIGN"])
 
     env_path = root / ".env"
     if env_path.is_file():

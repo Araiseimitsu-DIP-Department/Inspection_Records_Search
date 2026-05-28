@@ -7,26 +7,31 @@
   <style>
     :root {
       color-scheme: light;
-      --bg: #f2f5f7;
-      --panel: rgba(255, 255, 255, 0.92);
-      --panel-strong: #ffffff;
-      --line: #d9e1e8;
-      --line-strong: #b9c7d3;
-      --text: #1f2730;
-      --muted: #5b6672;
-      --primary: #0a5bd3;
-      --primary-deep: #083e91;
-      --primary-soft: rgba(10, 91, 211, 0.12);
-      --accent: #0f766e;
-      --warning: #b45309;
-      --danger: #b42318;
-      --shadow: 0 18px 44px rgba(13, 30, 54, 0.12);
-      --radius-xl: 24px;
-      --radius-lg: 18px;
-      --radius-md: 14px;
-      --radius-sm: 10px;
-      --sidebar-width: 270px;
-      --font: "Segoe UI", "Yu Gothic UI", "Meiryo", sans-serif;
+      --color-surface: #ffffff;
+      --color-surface-secondary: #f4f8fc;
+      --color-surface-tertiary: #e9f1f9;
+      --color-border: #dce5ee;
+      --color-border-subtle: #eef3f8;
+      --color-text: #2b2f36;
+      --color-text-secondary: #646b75;
+      --color-text-tertiary: #9aa3ad;
+      --color-accent: #1e88e5;
+      --color-accent-hover: #005cac;
+      --color-accent-soft: rgba(30, 136, 229, 0.10);
+      --color-accent-ring: rgba(30, 136, 229, 0.25);
+      --color-success: #10b981;
+      --color-success-soft: rgba(16, 185, 129, 0.10);
+      --color-danger: #ef4444;
+      --color-danger-soft: rgba(239, 68, 68, 0.10);
+      --color-warning: #f59e0b;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --radius-xl: 12px;
+      --radius-lg: 8px;
+      --radius-md: 8px;
+      --radius-sm: 6px;
+      --sidebar-width: 15rem;
+      --sidebar-collapsed-width: 4rem;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Yu Gothic Medium", "Yu Gothic", Meiryo, "Noto Sans JP", sans-serif;
     }
 
     * { box-sizing: border-box; }
@@ -34,11 +39,8 @@
     body {
       margin: 0;
       font-family: var(--font);
-      color: var(--text);
-      background:
-        radial-gradient(circle at top left, rgba(10, 91, 211, 0.14), transparent 28%),
-        radial-gradient(circle at bottom right, rgba(15, 118, 110, 0.10), transparent 24%),
-        linear-gradient(180deg, #f8fbfd 0%, #eef3f7 100%);
+      color: var(--color-text);
+      background: var(--color-surface-secondary);
       overflow: hidden;
     }
 
@@ -52,154 +54,221 @@
     }
 
     .app-shell {
-      display: grid;
-      grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+      display: flex;
       height: 100%;
       min-height: 720px;
     }
 
     .sidebar {
-      position: relative;
-      padding: 26px 20px;
-      background:
-        linear-gradient(180deg, rgba(7, 34, 74, 0.97) 0%, rgba(6, 24, 54, 0.98) 100%);
-      color: #eff4fb;
-      box-shadow: inset -1px 0 0 rgba(255,255,255,0.05);
+      width: var(--sidebar-width);
+      padding: 0;
+      background: var(--color-surface);
+      color: var(--color-text);
+      border-right: 1px solid var(--color-border);
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      transition: width .2s ease;
+      overflow: hidden;
     }
 
-    .sidebar::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(circle at 20% 16%, rgba(255,255,255,0.14), transparent 28%),
-        radial-gradient(circle at 75% 90%, rgba(58, 123, 213, 0.2), transparent 26%);
-      pointer-events: none;
+    .sidebar.is-collapsed {
+      width: var(--sidebar-collapsed-width);
     }
 
-    .brand, .nav-group, .sidebar-footer {
-      position: relative;
-      z-index: 1;
+    .sidebar-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      min-height: 4.5rem;
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--color-border-subtle);
+      gap: 0.5rem;
     }
 
-    .brand {
-      padding: 4px 4px 10px;
+    .sidebar-brand {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
     }
 
-    .brand-badge {
+    .sidebar-logo {
+      height: 2rem;
+      max-width: 100%;
+      width: auto;
+      display: block;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .sidebar-logo-word {
+      display: none;
+      font-size: 2rem;
+      line-height: 1;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: var(--color-accent-hover);
+      text-transform: uppercase;
+    }
+
+    .sidebar-title {
+      margin: 0;
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--color-text);
+      white-space: nowrap;
+      line-height: 1.2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sidebar.is-collapsed .sidebar-brand {
+      display: none;
+    }
+
+    .sidebar.is-collapsed .sidebar-header {
+      min-height: 3.5rem;
+      padding: 0.75rem 0.5rem;
+      justify-content: center;
+    }
+
+    .sidebar-toggle {
+      width: 2rem;
+      height: 2rem;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 7px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.12);
-      color: #dcecff;
-      font-size: 12px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 16px;
+      justify-content: center;
+      margin-top: 0;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      background: var(--color-surface);
+      color: var(--color-text-secondary);
+      transition: background-color .15s ease, color .15s ease;
     }
 
-    .brand-title {
-      margin: 0;
-      font-size: 30px;
-      line-height: 1.08;
-      letter-spacing: 0.04em;
-      font-weight: 800;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: clip;
+    .sidebar.is-collapsed .sidebar-toggle {
+      margin-top: 0;
     }
 
-    .brand-subtitle {
-      margin: 10px 0 0;
-      color: rgba(233, 241, 251, 0.72);
-      font-size: 13px;
-      line-height: 1.7;
+    .sidebar-toggle:hover {
+      background: var(--color-surface-secondary);
+      color: var(--color-text);
+    }
+
+    .sidebar-toggle svg {
+      width: 16px;
+      height: 16px;
+      transition: transform .2s ease;
+      transform: rotate(180deg);
+    }
+
+    .sidebar.is-collapsed .sidebar-toggle svg {
+      transform: rotate(0deg);
     }
 
     .nav-group {
-      display: grid;
-      gap: 10px;
-      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.375rem;
+      padding: 0.75rem 0.5rem;
     }
 
     .nav-btn {
       text-align: left;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 14px 16px;
-      border-radius: 16px;
-      background: rgba(255,255,255,0.05);
-      color: #f2f7ff;
-      border: 1px solid rgba(255,255,255,0.08);
-      transition: transform .18s ease, background .18s ease, border-color .18s ease;
+      gap: 0.625rem;
+      padding: 0.625rem 0.75rem;
+      border-radius: var(--radius-lg);
+      background: transparent;
+      color: var(--color-text-secondary);
+      transition: background-color .15s ease, color .15s ease;
     }
 
     .nav-btn:hover {
-      transform: translateY(-1px);
-      background: rgba(255,255,255,0.1);
+      background: var(--color-surface-secondary);
+      color: var(--color-text);
     }
 
     .nav-btn.is-active {
-      background: linear-gradient(135deg, rgba(10, 91, 211, 0.95), rgba(7, 62, 145, 0.96));
-      border-color: rgba(255,255,255,0.18);
-      box-shadow: 0 16px 28px rgba(10, 91, 211, 0.28);
+      background: var(--color-accent-soft);
+      color: var(--color-text);
     }
 
-    .nav-btn .label {
-      display: grid;
-      gap: 3px;
+    .nav-icon {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      color: var(--color-text-secondary);
     }
 
-    .nav-btn .label strong {
-      font-size: 15px;
-      font-weight: 700;
+    .nav-btn.is-active .nav-icon {
+      color: var(--color-accent);
     }
 
-    .nav-btn .label span {
-      font-size: 12px;
-      color: rgba(235, 243, 255, 0.7);
+    .nav-label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .nav-btn .arrow {
-      opacity: 0.85;
-      font-size: 18px;
+    .sidebar.is-collapsed .nav-btn {
+      justify-content: center;
+      padding: 0.625rem 0;
+    }
+
+    .sidebar.is-collapsed .nav-label {
+      display: none;
     }
 
     .sidebar-footer {
       margin-top: auto;
-      padding-top: 10px;
-      display: grid;
-      gap: 10px;
-      color: rgba(235, 243, 255, 0.72);
-      font-size: 12px;
-      line-height: 1.7;
+      padding: 0.75rem;
+      border-top: 1px solid var(--color-border-subtle);
+      color: var(--color-text-secondary);
+      font-size: 0.75rem;
     }
 
     .status-chip {
       display: inline-flex;
-      width: fit-content;
+      width: 100%;
+      max-width: 100%;
       align-items: center;
+      justify-content: flex-start;
       gap: 8px;
-      padding: 8px 12px;
+      padding: 0.5rem 0.75rem;
       border-radius: 999px;
-      background: rgba(255,255,255,0.1);
-      color: #edf4fb;
-      border: 1px solid rgba(255,255,255,0.10);
-      font-size: 12px;
+      background: var(--color-surface-secondary);
+      color: var(--color-text-secondary);
+      border: 1px solid var(--color-border);
+      font-size: 0.75rem;
     }
 
     .status-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #9bdcff;
-      box-shadow: 0 0 0 4px rgba(155, 220, 255, 0.14);
+      background: var(--color-accent);
+      box-shadow: 0 0 0 4px var(--color-accent-soft);
+    }
+
+    .sidebar.is-collapsed .sidebar-footer {
+      padding: 0.5rem 0.375rem;
+    }
+
+    .sidebar.is-collapsed .status-chip {
+      justify-content: center;
+      padding: 0.5rem 0;
+      border-radius: var(--radius-lg);
+    }
+
+    .sidebar.is-collapsed .status-text {
+      display: none;
     }
 
     .main {
@@ -207,12 +276,15 @@
       min-height: 0;
       display: flex;
       flex-direction: column;
+      flex: 1;
       padding: 22px 22px 22px 20px;
       gap: 16px;
+      overflow: auto;
     }
 
     .screen {
       flex: 1;
+      width: 100%;
       min-height: 0;
       display: none;
       flex-direction: column;
@@ -235,11 +307,12 @@
     }
 
     .card {
-      background: var(--panel);
+      background: var(--color-surface);
       border: 1px solid rgba(185, 199, 211, 0.5);
       border-radius: var(--radius-xl);
       box-shadow: var(--shadow);
       backdrop-filter: blur(14px);
+      width: 100%;
     }
 
     .card-header {
@@ -257,7 +330,7 @@
 
     .card-subtitle {
       margin: -2px 0 0;
-      color: var(--muted);
+      color: var(--color-text-secondary);
       font-size: 13px;
       line-height: 1.6;
     }
@@ -350,7 +423,7 @@
     }
 
     .personal-filter-label {
-      color: var(--muted);
+      color: var(--color-text-secondary);
       font-size: 12px;
       font-weight: 700;
       letter-spacing: 0.06em;
@@ -368,7 +441,7 @@
     }
 
     .field label {
-      color: var(--muted);
+      color: var(--color-text-secondary);
       font-size: 12px;
       font-weight: 700;
       letter-spacing: 0.06em;
@@ -378,9 +451,9 @@
     .field input,
     .field select {
       width: 100%;
-      border: 1px solid var(--line);
-      background: var(--panel-strong);
-      color: var(--text);
+      border: 1px solid var(--color-border);
+      background: var(--color-surface);
+      color: var(--color-text);
       border-radius: 12px;
       padding: 12px 14px;
       min-height: 46px;
@@ -395,7 +468,7 @@
     }
 
     .field .hint {
-      color: var(--muted);
+      color: var(--color-text-secondary);
       font-size: 12px;
       line-height: 1.5;
     }
@@ -425,21 +498,21 @@
     }
 
     .btn.primary {
-      background: linear-gradient(135deg, var(--primary), var(--primary-deep));
+      background: var(--color-accent);
       color: white;
       box-shadow: 0 12px 24px rgba(10, 91, 211, 0.22);
     }
 
     .btn.secondary {
-      background: #eef3f8;
-      color: var(--text);
-      border: 1px solid var(--line);
+      background: var(--color-surface);
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
     }
 
     .btn.ghost {
       background: transparent;
-      color: var(--muted);
-      border: 1px solid var(--line);
+      color: var(--color-text-secondary);
+      border: 1px solid var(--color-border);
     }
 
     .btn.danger {
@@ -482,7 +555,7 @@
     }
 
     .result-meta {
-      color: var(--muted);
+      color: var(--color-text-secondary);
       font-size: 12px;
       line-height: 1.6;
     }
@@ -499,7 +572,7 @@
       border-collapse: separate;
       border-spacing: 0;
       background: #fff;
-      border: 1px solid var(--line);
+      border: 1px solid var(--color-border);
       border-radius: 14px;
       overflow: hidden;
     }
@@ -512,7 +585,7 @@
       font-size: 12px;
       text-align: left;
       padding: 12px 12px;
-      border-bottom: 1px solid var(--line);
+      border-bottom: 1px solid var(--color-border);
       white-space: nowrap;
       z-index: 1;
     }
@@ -537,7 +610,7 @@
     .empty {
       padding: 32px 14px;
       text-align: center;
-      color: var(--muted);
+      color: var(--color-text-secondary);
       font-size: 13px;
     }
 
@@ -588,7 +661,7 @@
 
     .dialog p {
       margin: 10px 0 0;
-      color: var(--muted);
+      color: var(--color-text-secondary);
       line-height: 1.7;
       white-space: pre-wrap;
     }
@@ -664,28 +737,40 @@
     }
 
     .error-banner {
-      border: 1px solid rgba(180, 35, 24, 0.18);
-      background: linear-gradient(180deg, rgba(255, 244, 243, 0.98), rgba(255, 251, 250, 0.98));
-      color: #7a1d15;
-      border-radius: 18px;
+      border: 1px solid var(--color-danger-soft);
+      background: #fff8f8;
+      color: #9f1239;
+      border-radius: var(--radius-xl);
       padding: 16px 18px;
       line-height: 1.7;
     }
 
     .muted {
-      color: var(--muted);
+      color: var(--color-text-secondary);
+    }
+
+    .app-footer {
+      flex-shrink: 0;
+      margin-top: 0.5rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--color-border-subtle);
+      color: var(--color-text-tertiary);
+      font-size: 0.75rem;
+      text-align: center;
+      background: transparent;
     }
 
     @media (max-width: 1180px) {
       .app-shell {
-        grid-template-columns: 1fr;
+        display: block;
         overflow: auto;
       }
       body {
         overflow: auto;
       }
-      .sidebar {
-        border-radius: 0 0 26px 26px;
+      .sidebar,
+      .sidebar.is-collapsed {
+        width: 100%;
       }
       .main {
         padding-top: 16px;
@@ -705,41 +790,56 @@
 </head>
 <body>
   <div class="app-shell">
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="brand-badge">Inspection Records Search</div>
-        <h1 class="brand-title">外観検査記録照会</h1>
-        <p class="brand-subtitle">検査員別の記録、ロットID別の集計、外観検査の一覧検索をまとめて扱う業務画面です。</p>
+    <aside class="sidebar" id="sidebar" aria-expanded="true">
+      <div class="sidebar-header">
+        <div class="sidebar-brand">
+          <img
+            id="sidebarLogo"
+            class="sidebar-logo"
+            src="__ARAI_LOGO_SRC__"
+            alt="新井精密"
+          >
+          <div class="sidebar-logo-word" aria-hidden="true">ARAI</div>
+          <h1 class="sidebar-title">外観検査記録照会</h1>
+        </div>
+        <button id="sidebarToggleBtn" class="sidebar-toggle" type="button" aria-label="サイドバーを折りたたむ" title="サイドバーを折りたたむ">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </button>
       </div>
 
       <div class="nav-group" role="tablist" aria-label="画面切替">
         <button class="nav-btn is-active" data-page="main" type="button">
-          <span class="label">
-            <strong>検査員集計</strong>
-            <span>日付と品番で明細を検索</span>
-          </span>
-          <span class="arrow">›</span>
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M3 3V21H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M7 14L11 10L14 13L20 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+          <span class="nav-label">検査員集計</span>
         </button>
         <button class="nav-btn" data-page="lot" type="button">
-          <span class="label">
-            <strong>ロットID集計</strong>
-            <span>工程別のロット一覧</span>
-          </span>
-          <span class="arrow">›</span>
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21 16V8C21 7.65 20.82 7.33 20.52 7.15L12.52 2.15C12.2 1.95 11.8 1.95 11.48 2.15L3.48 7.15C3.18 7.33 3 7.65 3 8V16C3 16.35 3.18 16.67 3.48 16.85L11.48 21.85C11.8 22.05 12.2 22.05 12.52 21.85L20.52 16.85C20.82 16.67 21 16.35 21 16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M12 22V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M3.27 7L12 12L20.73 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+          <span class="nav-label">ロットID集計</span>
         </button>
         <button class="nav-btn" data-page="personal" type="button">
-          <span class="label">
-            <strong>検査員別照会</strong>
-            <span>個人の実績と集計を表示</span>
-          </span>
-          <span class="arrow">›</span>
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M17 21V19C17 17.9 16.1 17 15 17H5C3.9 17 3 17.9 3 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            <circle cx="10" cy="7" r="4" stroke="currentColor" stroke-width="2"></circle>
+            <path d="M21 21V19C21 18.2 20.53 17.48 19.8 17.17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M16 3.13C16.74 3.32 17.4 3.78 17.88 4.44C18.36 5.1 18.64 5.91 18.64 6.75C18.64 7.59 18.36 8.4 17.88 9.06C17.4 9.72 16.74 10.18 16 10.37" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+          <span class="nav-label">検査員別照会</span>
         </button>
       </div>
 
       <div class="sidebar-footer">
         <div id="connectionStatus" class="status-chip">
           <span class="status-dot"></span>
-          <span>読み込み中</span>
+          <span class="status-text">読み込み中</span>
         </div>
       </div>
     </aside>
@@ -887,6 +987,7 @@
           </div>
         </div>
       </section>
+      <footer class="app-footer">© ARAISEIMITSU 2026 - Created By DIP Department</footer>
     </main>
   </div>
 
@@ -910,6 +1011,7 @@
   <script>
     const state = {
       activePage: "main",
+      sidebarCollapsed: false,
       today: "",
       startupError: null,
       inspectors: [],
@@ -946,12 +1048,27 @@
       dom.busyOverlay.setAttribute("aria-hidden", String(!open));
     }
 
+    function initializeSidebarLogo() {
+      const logo = $("sidebarLogo");
+      if (!logo) return;
+      const fallback = logo.nextElementSibling;
+      const src = logo.getAttribute("src") || "";
+      const hasEmbeddedLogo = src.startsWith("data:image/");
+      if (hasEmbeddedLogo) {
+        logo.style.display = "block";
+        if (fallback) fallback.style.display = "none";
+      } else {
+        logo.style.display = "none";
+        if (fallback) fallback.style.display = "block";
+      }
+    }
+
     function setStatus(text, kind = "ok") {
-      dom.connectionStatus.querySelector("span:last-child").textContent = text;
+      dom.connectionStatus.querySelector(".status-text").textContent = text;
       dom.connectionStatus.style.opacity = kind === "error" ? "0.98" : "1";
       dom.connectionStatus.style.background = kind === "error"
-        ? "rgba(180,35,24,0.18)"
-        : "rgba(255,255,255,0.1)";
+        ? "var(--color-danger-soft)"
+        : "var(--color-surface-secondary)";
     }
 
     function toast(title, message, kind = "info", timeout = 3200) {
@@ -1030,6 +1147,19 @@
       document.querySelectorAll(".screen").forEach(screen => {
         screen.classList.toggle("is-active", screen.id === `screen-${page}`);
       });
+    }
+
+    function applySidebarState() {
+      dom.sidebar.classList.toggle("is-collapsed", state.sidebarCollapsed);
+      dom.sidebar.setAttribute("aria-expanded", String(!state.sidebarCollapsed));
+      const label = state.sidebarCollapsed ? "サイドバーを展開する" : "サイドバーを折りたたむ";
+      dom.sidebarToggleBtn.setAttribute("aria-label", label);
+      dom.sidebarToggleBtn.setAttribute("title", label);
+    }
+
+    function toggleSidebar() {
+      state.sidebarCollapsed = !state.sidebarCollapsed;
+      applySidebarState();
     }
 
     function normalizeText(value) {
@@ -1205,6 +1335,7 @@
 
     function initializeStaticUi() {
       fitSidebarTitle();
+      applySidebarState();
       dom.mainDateFrom.value = state.today;
       dom.mainDateTo.value = state.today;
       dom.personalDateFrom.value = state.today;
@@ -1350,6 +1481,7 @@
       document.querySelectorAll(".nav-btn").forEach(btn => {
         btn.addEventListener("click", () => setPage(btn.dataset.page));
       });
+      dom.sidebarToggleBtn.addEventListener("click", toggleSidebar);
 
       dom.mainSearchBtn.addEventListener("click", runMainSearch);
       dom.lotSearchBtn.addEventListener("click", runLotSearch);
@@ -1378,19 +1510,14 @@
     }
 
     function fitSidebarTitle() {
-      const title = document.querySelector(".brand-title");
+      const title = document.querySelector(".sidebar-title");
       if (!title) return;
-      const minSize = 16;
-      const maxSize = 30;
-      let size = maxSize;
-      title.style.fontSize = `${size}px`;
-      while (size > minSize && title.scrollWidth > title.clientWidth) {
-        size -= 1;
-        title.style.fontSize = `${size}px`;
-      }
+      title.style.fontSize = "";
     }
 
     function bindDom() {
+      dom.sidebar = $("sidebar");
+      dom.sidebarToggleBtn = $("sidebarToggleBtn");
       dom.connectionStatus = $("connectionStatus");
       dom.mainDateFrom = $("mainDateFrom");
       dom.mainDateTo = $("mainDateTo");
@@ -1426,6 +1553,7 @@
     }
 
     bindDom();
+    initializeSidebarLogo();
     wireEvents();
 
     window.addEventListener("pywebviewready", bootstrap);
