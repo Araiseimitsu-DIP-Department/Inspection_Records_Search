@@ -42,7 +42,7 @@ def main() -> int:
         js_api=bridge,
         width=1360,
         height=900,
-        min_size=(1120, 760),
+        min_size=(960, 600),
         confirm_close=True,
         text_select=True,
         background_color="#F2F5F7",

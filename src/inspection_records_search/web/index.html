@@ -763,6 +763,8 @@
     @media (max-width: 1180px) {
       .app-shell {
         display: block;
+        height: auto;
+        min-height: 100vh;
         overflow: auto;
       }
       body {
@@ -784,6 +786,169 @@
       .personal-filter-labels,
       .personal-filter-inputs {
         grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-height: 819px) {
+      html,
+      body {
+        height: auto;
+        min-height: 100%;
+      }
+
+      body {
+        overflow: auto;
+      }
+
+      .app-shell {
+        height: auto;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        min-height: 100vh;
+      }
+
+      .sidebar-header {
+        min-height: 3.75rem;
+        padding: 0.55rem 0.65rem;
+      }
+
+      .sidebar-logo {
+        height: 1.7rem;
+      }
+
+      .nav-group {
+        gap: 0.25rem;
+        padding: 0.55rem 0.45rem;
+      }
+
+      .nav-btn {
+        padding: 0.5rem 0.65rem;
+      }
+
+      .sidebar-footer {
+        padding: 0.55rem 0.65rem;
+      }
+
+      .main {
+        flex: 1 1 auto;
+        overflow: visible;
+        padding: 14px 16px;
+        gap: 10px;
+      }
+
+      .screen {
+        flex: 0 0 auto;
+        gap: 10px;
+      }
+
+      .screen > .result-card {
+        flex: 0 0 auto;
+      }
+
+      .card-header {
+        padding: 14px 16px 0;
+      }
+
+      .card-title {
+        margin-bottom: 7px;
+      }
+
+      .card-body {
+        padding: 12px 16px 14px;
+        gap: 10px;
+      }
+
+      .grid-2,
+      .grid-3,
+      .grid-4,
+      .grid-3-inline,
+      .grid-4-inline,
+      .personal-filter-labels,
+      .personal-filter-inputs {
+        gap: 10px;
+      }
+
+      .field {
+        gap: 6px;
+      }
+
+      .field input,
+      .field select,
+      .grid-4-inline .field.compact input {
+        min-height: 40px;
+        height: auto;
+        padding: 9px 12px;
+      }
+
+      .btn {
+        min-height: 40px;
+        padding: 9px 14px;
+      }
+
+      .results {
+        flex: 0 0 auto;
+        min-height: 280px;
+      }
+
+      .result-card {
+        min-height: 280px;
+      }
+
+      .result-head {
+        padding: 12px 16px 0;
+      }
+
+      .table-wrap {
+        min-height: 220px;
+        padding: 10px 16px 14px;
+      }
+
+      thead th {
+        padding: 9px 10px;
+      }
+
+      tbody td {
+        padding: 8px 10px;
+      }
+
+      .app-footer {
+        margin-top: 0;
+        padding-top: 0.45rem;
+      }
+    }
+
+    @media (max-height: 680px) {
+      .main {
+        padding: 10px 12px;
+        gap: 8px;
+      }
+
+      .screen {
+        gap: 8px;
+      }
+
+      .card-header {
+        padding: 10px 12px 0;
+      }
+
+      .card-body {
+        padding: 10px 12px 12px;
+        gap: 8px;
+      }
+
+      .results {
+        min-height: 240px;
+      }
+
+      .result-card {
+        min-height: 240px;
+      }
+
+      .table-wrap {
+        min-height: 190px;
+        padding: 8px 12px 12px;
       }
     }
   </style>
