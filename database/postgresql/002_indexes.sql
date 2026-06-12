@@ -1,20 +1,29 @@
-CREATE INDEX IF NOT EXISTS idx_appearance_records_inspector_date_time
-    ON appearance_records (inspector_id, inspection_date, inspection_time);
+CREATE INDEX IF NOT EXISTS idx_app_records_inspector_date_time
+    ON appearance_inspection_records (inspector_id, inspection_date, time_at);
 
-CREATE INDEX IF NOT EXISTS idx_appearance_records_lot
-    ON appearance_records (production_lot_id);
+CREATE INDEX IF NOT EXISTS idx_app_records_lot
+    ON appearance_inspection_records (production_lot_id);
 
-CREATE INDEX IF NOT EXISTS idx_appearance_summary_inspector_date
-    ON appearance_summary (inspector_id, inspection_date);
+CREATE INDEX IF NOT EXISTS idx_app_records_product
+    ON appearance_inspection_records (product_code);
 
-CREATE INDEX IF NOT EXISTS idx_appearance_summary_date_part
-    ON appearance_summary (inspection_date, part_number);
+CREATE INDEX IF NOT EXISTS idx_app_summaries_inspector_date
+    ON appearance_inspection_summaries (inspector_id, inspection_date);
 
-CREATE INDEX IF NOT EXISTS idx_appearance_summary_lot
-    ON appearance_summary (production_lot_id);
+CREATE INDEX IF NOT EXISTS idx_app_summaries_date_product
+    ON appearance_inspection_summaries (inspection_date, product_code);
 
-CREATE INDEX IF NOT EXISTS idx_appearance_summary_process
-    ON appearance_summary (process_no);
+CREATE INDEX IF NOT EXISTS idx_app_summaries_lot
+    ON appearance_inspection_summaries (production_lot_id);
+
+CREATE INDEX IF NOT EXISTS idx_app_summaries_process
+    ON appearance_inspection_summaries (process_no);
+
+CREATE INDEX IF NOT EXISTS idx_excel_product_slip_history_lot_product
+    ON excel_product_slip_history (production_lot_id, product_code);
+
+CREATE INDEX IF NOT EXISTS idx_defect_information_lot_product
+    ON defect_information (production_lot_id, product_code);
 
 CREATE INDEX IF NOT EXISTS idx_numeric_records_lot
     ON numeric_inspection_records (production_lot_id);

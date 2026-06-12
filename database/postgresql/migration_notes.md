@@ -2,128 +2,103 @@
 
 ## Status
 
-- Prepared: 2026-05-27
-- Dry-run: completed
-- PostgreSQL connection test: completed
-- English schema/import/index/constraint: completed
-- Validation: completed
-- App repository smoke test: completed
+- Updated: 2026-06-12
+- Current app backend: PostgreSQL supported through `DB_BACKEND=postgres`
+- Primary DB: `appearance_inspection_db`
+- Delivery label DB: `delivery_label_search_db`
+- Lot aggregation: calculated in Python, not PostgreSQL views
 
-## Expected Access row counts
+## Current PostgreSQL objects
 
-These counts come from the latest English-name production import on 2026-05-27.
+`appearance_inspection_db` uses these application tables:
 
 ```text
-appearance_records: 66,513
-appearance_summary: 49,701
-process_master: 10
-numeric_inspector_master: 21
-numeric_inspection_records: 24,943
-inspector_master: 76
-product_catalog: 168,837
-total: 310,101
+excel_product_slip_history
+check_sheet_list
+defect_information
+appearance_inspection_records
+appearance_inspection_record_archives
+appearance_inspection_summaries
+appearance_inspection_summary_archives
+process_master
+numeric_inspector_master
+numeric_inspection_records
+inspection_in_progress
+inspector_master
+inspection_person_master
 ```
 
-## Execution log
+`delivery_label_search_db` uses:
+
+```text
+delivery_label_search
+```
+
+The old lot aggregation views are obsolete and should not exist:
+
+```text
+production_lot_summary
+production_lot_aggregate
+```
+
+## App behavior notes
+
+- `PostgresInspectionRepository.fetch_lot_aggregate()` reproduces the Access lot aggregation in Python.
+- Work time is summed from `appearance_inspection_summaries.work_time`.
+- Quantity is looked up from `delivery_label_search_db.delivery_label_search.quantity` by `production_lot_id`.
+- Inspector dropdown labels show names only, while the app still resolves the underlying inspector ID.
+- Personal detail and personal summary column order follows the Access screens.
+- Quantity display in the web UI is comma-separated.
+
+## Environment
+
+```env
+DB_BACKEND=postgres
+POSTGRES_CONNECTION_URL=postgresql://postgres:password@192.168.1.120:5432/appearance_inspection_db
+DELIVERY_LABEL_POSTGRES_CONNECTION_URL=postgresql://postgres:password@192.168.1.120:5432/delivery_label_search_db
+POSTGRES_SCHEMA=public
+```
+
+Compatibility variables are still accepted:
+
+```text
+DATABASE_BACKEND
+POSTGRES_DSN
+DATABASE_URL
+DELIVERY_LABEL_DATABASE_URL
+```
+
+## Migration command
+
+Dry-run:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\migrate_access_to_postgres.py --dry-run
 ```
 
-Result:
-
-```text
-Access: \\192.168.1.200\共有\品質保証課\外観検査記録\外観検査記録照会.accdb
-t_外観検査記録: 66,503 rows
-t_外観検査集計: 49,693 rows
-t_工程マスタ: 10 rows
-t_数値検査員マスタ: 14 rows
-t_数値検査記録: 24,943 rows
-t_検査員マスタ: 76 rows
-t_現品票検索用: 168,837 rows
-```
-
-## Import
+Full reload for `appearance_inspection_db`:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\migrate_access_to_postgres.py --apply-schema --truncate --indexes --constraints
 ```
 
-Result:
+`--truncate` clears target tables before import. Run it only after stopping Access updates and taking backups.
 
-```text
-Access source:
-t_外観検査記録: 66,513 rows
-t_外観検査集計: 49,701 rows
-t_工程マスタ: 10 rows
-t_数値検査員マスタ: 14 rows
-t_数値検査記録: 24,943 rows
-t_検査員マスタ: 76 rows
-t_現品票検索用: 168,837 rows
+Apply `delivery_label_search_db` schema separately:
 
-PostgreSQL destination:
-imported appearance_records: 66,513 rows
-imported appearance_summary: 49,701 rows
-imported process_master: 10 rows
-imported numeric_inspector_master: 14 rows
-imported numeric_inspection_records: 24,943 rows
-imported inspector_master: 76 rows
-imported product_catalog: 168,837 rows
-inserted numeric_inspector_master placeholders: 7 rows
+```powershell
+psql -d delivery_label_search_db -f database/postgresql/delivery_label_search_schema.sql
 ```
 
-The previous Japanese-name PostgreSQL objects were removed after the English
-schema was verified.
+## Validation checklist
 
-## Validation
+- `database/postgresql/020_validation.sql` returns expected counts and no unexpected duplicates.
+- `production_lot_summary` and `production_lot_aggregate` are absent.
+- Lot aggregation for `06131-05511K` matches Access quantities for sampled lots such as `P153636`, `P153687`, and `P154186`.
+- Inspector-specific detail and summary counts match Access for the same inspector and date range.
+- Build output starts with `DB_BACKEND=postgres` and can search/export without database errors.
 
-```text
-duplicate appearance_records.id: 0
-duplicate appearance_summary.id: 0
-duplicate numeric_inspection_records.id: 0
-summary missing inspector: 0
-numeric record missing inspector: 26
-summary missing lot: 0
-```
+## Known operational note
 
-The 26 missing numeric inspector references were repaired without changing
-the inspection records. Seven non-visible placeholder rows were added to
-`numeric_inspector_master`.
-
-```text
-inserted numeric_inspector_master placeholders: 7
-placeholder IDs: 00, 10, 2, 3, 30, 31, 71
-numeric record missing inspector after repair: 0
-```
-
-## Repository smoke test
-
-```text
-repository: PostgresInspectionRepository
-inspectors: 76
-main_detail_2025-01-06: 115
-lot_aggregate: 27048
-```
-
-## Connection test
-
-The app-style `.env` keys were confirmed:
-
-```text
-DB_BACKEND=postgres
-POSTGRES_CONNECTION_URL=(set)
-POSTGRES_SCHEMA=public
-```
-
-Result:
-
-```text
-database: inspection_records_search
-schema: public
-server: 192.168.1.120:5432
-connection: OK
-objects checked: t_外観検査記録, t_外観検査集計, Q_生産ロット集計
-objects found before import: none
-objects checked after English import: appearance_records, appearance_summary, production_lot_aggregate
-objects found after English import: all expected objects
-```
+If Access continues to receive new rows after PostgreSQL import, Access and PostgreSQL search results will differ.
+Before production cutover, stop Access updates and reload the latest data, or run a controlled incremental sync.

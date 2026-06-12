@@ -473,6 +473,78 @@
       line-height: 1.5;
     }
 
+    .combo {
+      position: relative;
+    }
+
+    .combo input {
+      padding-right: 42px;
+    }
+
+    .combo-toggle {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      width: 30px;
+      height: 30px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-lg);
+      background: transparent;
+      color: var(--color-text-secondary);
+      transform: translateY(-50%);
+      transition: background-color .15s ease, color .15s ease;
+    }
+
+    .combo-toggle:hover {
+      background: var(--color-surface-secondary);
+      color: var(--color-text);
+    }
+
+    .combo-list {
+      position: absolute;
+      z-index: 40;
+      left: 0;
+      right: 0;
+      top: calc(100% + 6px);
+      max-height: 260px;
+      overflow-y: auto;
+      padding: 6px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      background: var(--color-surface);
+      box-shadow: 0 16px 32px rgba(15, 23, 42, 0.14);
+      display: none;
+    }
+
+    .combo-list.is-open {
+      display: block;
+    }
+
+    .combo-option {
+      width: 100%;
+      min-height: 38px;
+      padding: 8px 10px;
+      border-radius: var(--radius-lg);
+      background: transparent;
+      color: var(--color-text);
+      text-align: left;
+      font-weight: 500;
+    }
+
+    .combo-option:hover,
+    .combo-option.is-active {
+      background: var(--color-accent-soft);
+      color: var(--color-text);
+    }
+
+    .combo-empty {
+      padding: 10px;
+      color: var(--color-text-secondary);
+      font-size: 13px;
+    }
+
     .actions {
       display: flex;
       flex-wrap: wrap;
@@ -1104,9 +1176,10 @@
                 <div class="personal-filter-spacer" aria-hidden="true"></div>
               </div>
               <div class="personal-filter-inputs">
-                <div class="field compact">
-                  <input id="inspectorInput" type="text" list="inspectorOptions" placeholder="ID または氏名で検索">
-                  <datalist id="inspectorOptions"></datalist>
+                <div class="field compact combo" id="inspectorCombo">
+                  <input id="inspectorInput" type="text" autocomplete="off" placeholder="氏名で検索">
+                  <button class="combo-toggle" id="inspectorToggle" type="button" aria-label="検査員候補を表示">▼</button>
+                  <div class="combo-list" id="inspectorOptions" role="listbox"></div>
                 </div>
                 <div class="field">
                   <input id="personalDateFrom" type="date">
@@ -1342,6 +1415,61 @@
       node.appendChild(fragment);
     }
 
+    function inspectorDisplayName(item) {
+      return (item && item.name ? String(item.name).trim() : "") || (item ? String(item.id || "").trim() : "");
+    }
+
+    function inspectorMatches(item, query) {
+      const q = normalizeText(query);
+      if (!q) return true;
+      return normalizeText(item.id).includes(q)
+        || normalizeText(item.name).includes(q)
+        || normalizeText(item.label).includes(q);
+    }
+
+    function renderInspectorOptions(open = true) {
+      const query = dom.inspectorInput.value;
+      const matches = state.inspectors
+        .filter(item => inspectorMatches(item, query))
+        .slice(0, 80);
+      dom.inspectorOptions.innerHTML = "";
+      const fragment = document.createDocumentFragment();
+      if (matches.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "combo-empty";
+        empty.textContent = "候補がありません";
+        fragment.appendChild(empty);
+      } else {
+        matches.forEach(item => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "combo-option";
+          btn.textContent = inspectorDisplayName(item);
+          btn.dataset.inspectorId = item.id || "";
+          btn.addEventListener("mousedown", event => {
+            event.preventDefault();
+            selectInspector(item);
+          });
+          fragment.appendChild(btn);
+        });
+      }
+      dom.inspectorOptions.appendChild(fragment);
+      dom.inspectorOptions.classList.toggle("is-open", open);
+    }
+
+    function openInspectorOptions() {
+      renderInspectorOptions(true);
+    }
+
+    function closeInspectorOptions() {
+      dom.inspectorOptions.classList.remove("is-open");
+    }
+
+    function selectInspector(item) {
+      dom.inspectorInput.value = inspectorDisplayName(item);
+      closeInspectorOptions();
+    }
+
     function initLookupMaps() {
       state.inspectorLookup = new Map();
       state.inspectors.forEach(item => {
@@ -1361,8 +1489,7 @@
       if (direct) return direct;
 
       const partialMatches = state.inspectors.filter(item => {
-        const hay = normalizeText(item.label);
-        return hay.includes(normalizeText(raw));
+        return inspectorMatches(item, raw);
       });
       if (partialMatches.length === 1) {
         return partialMatches[0].id;
@@ -1374,9 +1501,25 @@
       return cell && typeof cell === "object" ? cell.kind : "text";
     }
 
-    function valueDisplay(cell) {
+    function isQuantityHeader(header) {
+      return typeof header === "string" && header.includes("数量");
+    }
+
+    function valueDisplay(cell, header = "") {
       if (cell && typeof cell === "object") {
+        if (isQuantityHeader(header) && cell.value !== null && cell.value !== undefined && cell.value !== "") {
+          const numeric = Number(cell.value);
+          if (Number.isFinite(numeric)) {
+            return numeric.toLocaleString("ja-JP");
+          }
+        }
         return cell.display ?? "";
+      }
+      if (isQuantityHeader(header) && cell !== null && cell !== undefined && cell !== "") {
+        const numeric = Number(cell);
+        if (Number.isFinite(numeric)) {
+          return numeric.toLocaleString("ja-JP");
+        }
       }
       return cell ?? "";
     }
@@ -1444,7 +1587,7 @@
           visibleHeaders.forEach(({ header, index }) => {
             const td = document.createElement("td");
             const cell = row[index];
-            td.textContent = valueDisplay(cell);
+            td.textContent = valueDisplay(cell, header);
             const cls = alignClass(table.headers, cell, header, index);
             if (cls) td.classList.add(cls);
             tr.appendChild(td);
@@ -1509,7 +1652,7 @@
       renderTable(dom.lotTable, null);
       renderTable(dom.personalRecordsTable, null);
       renderTable(dom.personalSummaryTable, null);
-      populateDatalist(dom.inspectorOptions, state.inspectors, item => item.label);
+      renderInspectorOptions(false);
       populateDatalist(dom.kouteiOptions, state.kouteiOptions, item => item);
       dom.kouteiLegend.innerHTML = "";
       const legendItems = state.kouteiPairs.length ? state.kouteiPairs : state.kouteiOptions.map(value => ({ label: value }));
@@ -1651,6 +1794,21 @@
       dom.mainSearchBtn.addEventListener("click", runMainSearch);
       dom.lotSearchBtn.addEventListener("click", runLotSearch);
       dom.personalSearchBtn.addEventListener("click", runPersonalSearch);
+      dom.inspectorInput.addEventListener("focus", openInspectorOptions);
+      dom.inspectorInput.addEventListener("input", openInspectorOptions);
+      dom.inspectorInput.addEventListener("keydown", event => {
+        if (event.key === "Escape") {
+          closeInspectorOptions();
+        }
+      });
+      dom.inspectorToggle.addEventListener("click", () => {
+        if (dom.inspectorOptions.classList.contains("is-open")) {
+          closeInspectorOptions();
+        } else {
+          openInspectorOptions();
+          dom.inspectorInput.focus();
+        }
+      });
 
       dom.mainExportBtn.addEventListener("click", () => {
         exportTable(state.resultData.main, "外観検査記録照会_検査員集計.xlsx", "検査員集計");
@@ -1668,6 +1826,13 @@
       document.addEventListener("keydown", event => {
         if (event.key === "Escape") {
           closeModal(false);
+          closeInspectorOptions();
+        }
+      });
+
+      document.addEventListener("mousedown", event => {
+        if (dom.inspectorCombo && !dom.inspectorCombo.contains(event.target)) {
+          closeInspectorOptions();
         }
       });
 
@@ -1697,7 +1862,9 @@
       dom.lotExportBtn = $("lotExportBtn");
       dom.lotTable = $("lotTable");
       dom.lotMeta = $("lotMeta");
+      dom.inspectorCombo = $("inspectorCombo");
       dom.inspectorInput = $("inspectorInput");
+      dom.inspectorToggle = $("inspectorToggle");
       dom.personalDateFrom = $("personalDateFrom");
       dom.personalDateTo = $("personalDateTo");
       dom.personalSearchBtn = $("personalSearchBtn");

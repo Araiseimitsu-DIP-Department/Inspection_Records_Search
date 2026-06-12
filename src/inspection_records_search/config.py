@@ -86,7 +86,18 @@ def get_postgres_dsn() -> str:
     load_env()
     return (
         os.getenv("POSTGRES_CONNECTION_URL")
+        or os.getenv("DATABASE_URL")
         or os.getenv("POSTGRES_DSN")
+        or ""
+    ).strip().strip('"')
+
+
+def get_delivery_label_postgres_dsn() -> str:
+    """Return the PostgreSQL DSN for delivery label lookup data."""
+    load_env()
+    return (
+        os.getenv("DELIVERY_LABEL_POSTGRES_CONNECTION_URL")
+        or os.getenv("DELIVERY_LABEL_DATABASE_URL")
         or ""
     ).strip().strip('"')
 

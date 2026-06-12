@@ -5,6 +5,7 @@ from __future__ import annotations
 from inspection_records_search.config import (
     get_access_db_path,
     get_database_backend,
+    get_delivery_label_postgres_dsn,
     get_postgres_dsn,
     validate_access_db_path,
 )
@@ -32,5 +33,5 @@ def create_inspection_repository() -> InspectionRepository:
             raise ConfigurationError(
                 "DB_BACKEND=postgres の場合、POSTGRES_CONNECTION_URL を設定してください。"
             )
-        return PostgresInspectionRepository(dsn)
+        return PostgresInspectionRepository(dsn, get_delivery_label_postgres_dsn())
     raise ConfigurationError(f"DB_BACKEND の値が不正です: {backend}")
