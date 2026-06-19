@@ -29,7 +29,7 @@ def resource_path(*parts: str) -> Path:
 
 def get_window_icon_png_path() -> Path | None:
     """Return the PNG used for the window and taskbar icon."""
-    path = resource_path("docs", "精密部品の品質検査.png")
+    path = resource_path("docs", "app_icon.png")
     return path if path.is_file() else None
 
 

@@ -14,7 +14,7 @@ def main() -> int:
         print("Error: .venv was not found.", file=sys.stderr)
         return 1
 
-    png = root / "docs" / "精密部品の品質検査.png"
+    png = root / "docs" / "app_icon.png"
     if not png.is_file():
         print(f"Error: PNG not found: {png}", file=sys.stderr)
         return 1
