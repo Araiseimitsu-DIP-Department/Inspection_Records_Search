@@ -5,7 +5,7 @@
 - Updated: 2026-06-12
 - Current app backend: PostgreSQL supported through `DB_BACKEND=postgres`
 - Primary DB: `appearance_inspection_db`
-- Delivery label DB: `delivery_label_search_db`
+- Delivery label DB: `delivery_label_db`
 - Lot aggregation: calculated in Python, not PostgreSQL views
 
 ## Current PostgreSQL objects
@@ -28,10 +28,10 @@ inspector_master
 inspection_person_master
 ```
 
-`delivery_label_search_db` uses:
+`delivery_label_db` uses:
 
 ```text
-delivery_label_search
+delivery_label_history
 ```
 
 The old lot aggregation views are obsolete and should not exist:
@@ -45,7 +45,7 @@ production_lot_aggregate
 
 - `PostgresInspectionRepository.fetch_lot_aggregate()` reproduces the Access lot aggregation in Python.
 - Work time is summed from `appearance_inspection_summaries.work_time`.
-- Quantity is looked up from `delivery_label_search_db.delivery_label_search.quantity` by `production_lot_id`.
+- Quantity is looked up from `delivery_label_db.delivery_label_history.quantity` by `production_lot_id`.
 - Inspector dropdown labels show names only, while the app still resolves the underlying inspector ID.
 - Personal detail and personal summary column order follows the Access screens.
 - Quantity display in the web UI is comma-separated.
@@ -55,7 +55,7 @@ production_lot_aggregate
 ```env
 DB_BACKEND=postgres
 POSTGRES_CONNECTION_URL=postgresql://postgres:password@192.168.1.120:5432/appearance_inspection_db
-DELIVERY_LABEL_POSTGRES_CONNECTION_URL=postgresql://postgres:password@192.168.1.120:5432/delivery_label_search_db
+DELIVERY_LABEL_POSTGRES_CONNECTION_URL=postgresql://postgres:password@192.168.1.120:5432/delivery_label_db
 POSTGRES_SCHEMA=public
 ```
 
@@ -84,11 +84,7 @@ Full reload for `appearance_inspection_db`:
 
 `--truncate` clears target tables before import. Run it only after stopping Access updates and taking backups.
 
-Apply `delivery_label_search_db` schema separately:
-
-```powershell
-psql -d delivery_label_search_db -f database/postgresql/delivery_label_search_schema.sql
-```
+`delivery_label_search_db` is retired. Use the existing `delivery_label_db.delivery_label_history` table instead.
 
 ## Validation checklist
 

@@ -93,7 +93,7 @@ def get_postgres_dsn() -> str:
 
 
 def get_delivery_label_postgres_dsn() -> str:
-    """Return the PostgreSQL DSN for delivery label lookup data."""
+    """Return the PostgreSQL DSN for delivery label history lookup data."""
     load_env()
     return (
         os.getenv("DELIVERY_LABEL_POSTGRES_CONNECTION_URL")

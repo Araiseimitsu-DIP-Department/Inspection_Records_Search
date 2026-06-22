@@ -10,14 +10,14 @@ PostgreSQL 側の物理名は英語表記に統一し、画面と Excel 出力�
 | 区分 | フォルダ | PostgreSQL DB | 用途 |
 |---|---|---|---|
 | 外観検査 | `docs/appearance_inspection_db/` | `appearance_inspection_db` | 外観検査記録、集計、工程、検査員マスタ |
-| 現品票検索 | `docs/delivery_label_search_db/` | `delivery_label_search_db` | ロットID集計の数量参照 |
+| 現品票履歴 | delivery label history | `delivery_label_db` | ロットID集計の数量参照 |
 
 接続例:
 
 ```env
 DB_BACKEND=postgres
 POSTGRES_CONNECTION_URL=postgresql://postgres:password@192.168.1.120:5432/appearance_inspection_db
-DELIVERY_LABEL_POSTGRES_CONNECTION_URL=postgresql://postgres:password@192.168.1.120:5432/delivery_label_search_db
+DELIVERY_LABEL_POSTGRES_CONNECTION_URL=postgresql://postgres:password@192.168.1.120:5432/delivery_label_db
 POSTGRES_SCHEMA=public
 ```
 
@@ -27,7 +27,7 @@ POSTGRES_SCHEMA=public
 - `production_lot_summary` と `production_lot_aggregate` は使用しません。作成済みの場合は削除対象です。
 - ロットID集計は `PostgresInspectionRepository.fetch_lot_aggregate()` で処理します。
 - 作業時間は `appearance_inspection_summaries.work_time` をロット、工程、品番、品名単位で合計します。
-- 数量は `delivery_label_search_db.delivery_label_search.quantity` を生産ロットIDで参照します。見つからない場合だけ外観検査集計側の数量を補助値として使用します。
+- 数量は `delivery_label_db.delivery_label_history.quantity` を生産ロットIDで参照します。見つからない場合だけ外観検査集計側の数量を補助値として使用します。
 
 ## テーブルマッピング
 
@@ -49,11 +49,11 @@ POSTGRES_SCHEMA=public
 | `t_検査員マスタ` | `inspector_master` | 検査員候補、検査員名 |
 | `t_検査員マスタ_個人データ用` | `inspection_person_master` | 個人データ用検査員マスタ |
 
-### delivery_label_search_db
+### delivery_label_db
 
 | Access テーブル | PostgreSQL テーブル | 用途 |
 |---|---|---|
-| `T_現品票検索用` | `delivery_label_search` | 生産ロットIDごとの数量参照 |
+| 現品票履歴 | `delivery_label_history` | 生産ロットIDごとの数量参照 |
 
 ## 主なカラム名
 
@@ -84,7 +84,6 @@ POSTGRES_SCHEMA=public
 | `database/postgresql/002_indexes.sql` | `appearance_inspection_db` の検索用インデックス |
 | `database/postgresql/003_constraints.sql` | `appearance_inspection_db` の制約 |
 | `database/postgresql/020_validation.sql` | `appearance_inspection_db` の検証SQL |
-| `database/postgresql/delivery_label_search_schema.sql` | `delivery_label_search_db` のテーブルとインデックス |
 | `database/postgresql/migration_notes.md` | 移行メモ |
 | `scripts/migrate_access_to_postgres.py` | Access から PostgreSQL への投入スクリプト |
 
@@ -124,7 +123,7 @@ Access ファイルと PostgreSQL の既存データベースをバックアッ�
 このスクリプトは `appearance_inspection_db` のスキーマ適用、既存データ削除、Access データ投入、インデックス、制約適用を行います。
 `--truncate` は移行先テーブルを空にするため、本番実行前に必ずバックアップしてください。
 
-`delivery_label_search_db` は別DBのため、`database/postgresql/delivery_label_search_schema.sql` を適用し、現品票検索データを同DBへ投入してください。
+`delivery_label_search_db` は廃止済みです。数量参照は `DELIVERY_LABEL_POSTGRES_CONNECTION_URL` で指定した `delivery_label_db.delivery_label_history` を使用します。
 
 ### 5. 検証
 

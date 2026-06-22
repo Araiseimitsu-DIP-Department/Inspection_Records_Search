@@ -27,10 +27,10 @@ PostgreSQL では次の2つのデータベースを使います。
 | データベース | 用途 |
 |---|---|
 | `appearance_inspection_db` | 外観検査記録、集計、検査員、工程マスタなどの本体データ |
-| `delivery_label_search_db` | ロットID集計の数量参照用データ |
+| `delivery_label_db` | ロットID集計の数量参照用データ |
 
 ロットID集計は Access のクエリを PostgreSQL view として作らず、Python 側で処理します。
-`appearance_inspection_summaries.work_time` を集計し、数量は `delivery_label_search_db.delivery_label_search.quantity` から取得します。
+`appearance_inspection_summaries.work_time` を集計し、数量は `delivery_label_db.delivery_label_history.quantity` から取得します。
 
 ## 現在の構成
 
@@ -46,7 +46,6 @@ Inspection_Records_Search/
 │     ├─ 002_indexes.sql
 │     ├─ 003_constraints.sql
 │     ├─ 020_validation.sql
-│     ├─ delivery_label_search_schema.sql
 │     └─ migration_notes.md
 ├─ docs/
 │  ├─ postgresql-migration.md
@@ -77,7 +76,7 @@ Inspection_Records_Search/
 | `ACCESS_DB_PATH` | Access ファイルのフルパス |
 | `DB_BACKEND` | `access` または `postgres` |
 | `POSTGRES_CONNECTION_URL` | `appearance_inspection_db` への PostgreSQL 接続URL |
-| `DELIVERY_LABEL_POSTGRES_CONNECTION_URL` | `delivery_label_search_db` への PostgreSQL 接続URL |
+| `DELIVERY_LABEL_POSTGRES_CONNECTION_URL` | `delivery_label_db` への PostgreSQL 接続URL |
 | `POSTGRES_SCHEMA` | PostgreSQL schema。通常は `public` |
 | `EXPORT_DIR` | 保存ダイアログの初期フォルダ。未指定時はアプリ既定フォルダ |
 
@@ -89,7 +88,7 @@ Inspection_Records_Search/
 ACCESS_DB_PATH=\\192.168.1.200\共有\品質保証課\外観検査記録\外観検査記録照会.accdb
 DB_BACKEND=access
 POSTGRES_CONNECTION_URL=postgresql://postgres:password@192.168.1.120:5432/appearance_inspection_db
-DELIVERY_LABEL_POSTGRES_CONNECTION_URL=postgresql://postgres:password@192.168.1.120:5432/delivery_label_search_db
+DELIVERY_LABEL_POSTGRES_CONNECTION_URL=postgresql://postgres:password@192.168.1.120:5432/delivery_label_db
 POSTGRES_SCHEMA=public
 EXPORT_DIR=
 ```
@@ -100,7 +99,7 @@ EXPORT_DIR=
 ACCESS_DB_PATH=\\192.168.1.200\共有\品質保証課\外観検査記録\外観検査記録照会.accdb
 DB_BACKEND=postgres
 POSTGRES_CONNECTION_URL=postgresql://postgres:password@192.168.1.120:5432/appearance_inspection_db
-DELIVERY_LABEL_POSTGRES_CONNECTION_URL=postgresql://postgres:password@192.168.1.120:5432/delivery_label_search_db
+DELIVERY_LABEL_POSTGRES_CONNECTION_URL=postgresql://postgres:password@192.168.1.120:5432/delivery_label_db
 POSTGRES_SCHEMA=public
 EXPORT_DIR=
 ```

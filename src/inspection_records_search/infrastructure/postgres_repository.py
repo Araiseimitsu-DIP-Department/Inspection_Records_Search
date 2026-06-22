@@ -51,7 +51,7 @@ def execute_query(
 
 
 class PostgresInspectionRepository:
-    """Repository using appearance_inspection_db physical names."""
+    """Repository using appearance_inspection_db and delivery_label_db tables."""
 
     def __init__(self, dsn: str, delivery_label_dsn: str = "") -> None:
         self._dsn = dsn
@@ -224,9 +224,11 @@ class PostgresInspectionRepository:
         if not self._delivery_label_dsn or not lots:
             return {}
         sql = (
-            "SELECT production_lot_id, quantity "
-            "FROM delivery_label_search "
-            "WHERE production_lot_id = ANY(%s)"
+            "SELECT DISTINCT ON (production_lot_id) production_lot_id, quantity "
+            "FROM delivery_label_history "
+            "WHERE production_lot_id = ANY(%s) AND quantity IS NOT NULL "
+            "ORDER BY production_lot_id, instruction_date DESC NULLS LAST, "
+            "printed_date DESC NULLS LAST, completed_date DESC NULLS LAST"
         )
         try:
             _headers, rows = execute_query(self._delivery_label_dsn, sql, [list(lots)])
