@@ -256,6 +256,8 @@ IDENTITY_TABLES = (
     "inspection_person_master",
 )
 
+IDENTITY_COLUMNS = {table: {"id"} for table in IDENTITY_TABLES}
+
 
 def _schema_path(file_name: str) -> Path:
     return get_application_base_dir() / "database" / "postgresql" / file_name
@@ -272,11 +274,16 @@ def _select_sql(table: str, columns: tuple[str, ...]) -> str:
 
 def _insert_sql(table: str, columns: tuple[str, ...]) -> sql.Composed:
     placeholders = sql.SQL(", ").join(sql.Placeholder() for _ in columns)
-    return sql.SQL("INSERT INTO {} ({}) OVERRIDING SYSTEM VALUE VALUES ({})").format(
+    return sql.SQL("INSERT INTO {} ({}) VALUES ({})").format(
         sql.Identifier(table),
         sql.SQL(", ").join(sql.Identifier(c) for c in columns),
         placeholders,
     )
+
+
+def _copy_columns(spec: TableSpec) -> tuple[tuple[str, str], ...]:
+    identity_columns = IDENTITY_COLUMNS.get(spec.postgres_table, set())
+    return tuple(c for c in spec.columns if c[1] not in identity_columns)
 
 
 def _print_counts(access_path: str) -> None:
@@ -299,23 +306,6 @@ def _truncate(conn: psycopg.Connection) -> None:
             )
         )
     conn.commit()
-
-
-def _reset_identity(conn: psycopg.Connection, table: str) -> None:
-    with conn.cursor() as cur:
-        cur.execute(
-            sql.SQL(
-                "SELECT setval(pg_get_serial_sequence(%s, %s), "
-                "COALESCE((SELECT MAX({}) FROM {}), 1), "
-                "COALESCE((SELECT MAX({}) FROM {}), 0) > 0)"
-            ).format(
-                sql.Identifier("id"),
-                sql.Identifier(table),
-                sql.Identifier("id"),
-                sql.Identifier(table),
-            ),
-            [table, "id"],
-        )
 
 
 def _insert_missing_numeric_inspectors(conn: psycopg.Connection) -> int:
@@ -342,8 +332,11 @@ def _copy_table(
     spec: TableSpec,
     batch_size: int,
 ) -> int:
-    _, rows = execute_query(access_path, _select_sql(spec.access_table, spec.access_columns))
-    statement = _insert_sql(spec.postgres_table, spec.postgres_columns)
+    columns = _copy_columns(spec)
+    access_columns = tuple(c[0] for c in columns)
+    postgres_columns = tuple(c[1] for c in columns)
+    _, rows = execute_query(access_path, _select_sql(spec.access_table, access_columns))
+    statement = _insert_sql(spec.postgres_table, postgres_columns)
     with conn.cursor() as cur:
         for idx in range(0, len(rows), batch_size):
             cur.executemany(statement, rows[idx : idx + batch_size])
@@ -385,8 +378,6 @@ def main() -> int:
         for spec in TABLES:
             count = _copy_table(conn, access_path, spec, args.batch_size)
             print(f"imported {spec.postgres_table}: {count:,} rows")
-        for table in IDENTITY_TABLES:
-            _reset_identity(conn, table)
         inserted = _insert_missing_numeric_inspectors(conn)
         if inserted:
             print(f"inserted numeric_inspector_master placeholders: {inserted:,} rows")
