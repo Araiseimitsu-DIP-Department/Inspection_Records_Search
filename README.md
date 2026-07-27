@@ -30,7 +30,16 @@ PostgreSQL では次の2つのデータベースを使います。
 | `delivery_label_db` | ロットID集計の数量参照用データ |
 
 ロットID集計は Access のクエリを PostgreSQL view として作らず、Python 側で処理します。
-`appearance_inspection_summaries.work_time` を集計し、数量は `delivery_label_db.delivery_label_history.quantity` から取得します。
+過去分は `appearance_inspection_summaries` を使用し、同テーブルの最終日以降は、
+常時追加される `appearance_inspection_records` の前後時刻からAccess版と同じ休憩控除で
+作業時間を計算します。計算結果は画面表示時のみ生成し、データベースへは書き込みません。
+数量は `delivery_label_db.delivery_label_history.quantity` から取得します。
+
+数値検査員は、常時更新される `delivery_label_db.qr_history` のうち、
+`process_name` に「数値検査」を含み、`position` が空でない履歴から
+ロットごとの最新1件を取得します。`position` を検査員IDとして
+`numeric_inspector_master` と照合し、更新停止済みの
+`numeric_inspection_records` は参照しません。
 
 ## 現在の構成
 
