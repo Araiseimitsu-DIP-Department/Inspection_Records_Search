@@ -437,14 +437,13 @@ class WebAppBridge:
                 continue
             inspector_id = "" if row[0] is None else str(row[0]).strip()
             inspector_name = "" if row[1] is None else str(row[1]).strip()
-            if not inspector_id:
+            if not inspector_id or not inspector_name:
                 continue
-            label = f"{inspector_id}  {inspector_name}".rstrip()
             inspectors.append(
                 {
                     "id": inspector_id,
                     "name": inspector_name,
-                    "label": label,
+                    "label": inspector_name,
                 }
             )
         return inspectors

@@ -8,6 +8,10 @@ Desktop.ini
 .vscode/
 *.code-workspace
 .cursor/
+!.cursor/
+.cursor/*
+!.cursor/rules/
+!.cursor/rules/**
 
 # === Python バイトコード ===
 __pycache__/

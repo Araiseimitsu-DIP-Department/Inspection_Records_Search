@@ -1,0 +1,3 @@
+# Access開発・移行・Access対応ビルドでのみ追加する依存関係。
+-r requirements.txt
+pyodbc>=5.0.0

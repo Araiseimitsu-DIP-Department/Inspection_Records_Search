@@ -315,6 +315,13 @@
       width: 100%;
     }
 
+    /* backdrop-filter creates a stacking context; keep the dropdown's card
+       above the result cards so they cannot cover the list. */
+    #screen-personal > .card:first-child {
+      position: relative;
+      z-index: 2;
+    }
+
     .card-header {
       padding: 18px 20px 0;
     }
@@ -1416,7 +1423,7 @@
     }
 
     function inspectorDisplayName(item) {
-      return (item && item.name ? String(item.name).trim() : "") || (item ? String(item.id || "").trim() : "");
+      return item && item.name ? String(item.name).trim() : "";
     }
 
     function inspectorMatches(item, query) {
@@ -1430,8 +1437,7 @@
     function renderInspectorOptions(open = true) {
       const query = dom.inspectorInput.value;
       const matches = state.inspectors
-        .filter(item => inspectorMatches(item, query))
-        .slice(0, 80);
+        .filter(item => inspectorDisplayName(item) && inspectorMatches(item, query));
       dom.inspectorOptions.innerHTML = "";
       const fragment = document.createDocumentFragment();
       if (matches.length === 0) {

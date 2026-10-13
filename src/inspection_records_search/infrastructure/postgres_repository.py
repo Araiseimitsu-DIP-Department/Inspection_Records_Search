@@ -9,7 +9,7 @@ from typing import Iterator, Optional
 
 import psycopg
 
-from inspection_records_search.infrastructure.access_gateway import (
+from inspection_records_search.domain.process_options import (
     _expand_koutei_match_values,
 )
 from inspection_records_search.shared.errors import (

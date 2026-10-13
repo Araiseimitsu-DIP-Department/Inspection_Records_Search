@@ -164,7 +164,9 @@ Access ファイルと PostgreSQL の既存データベースをバックアッ�
 
 ## 切り戻し
 
-問題があれば `.env` を Access に戻します。
+問題があればAccess対応版を使用して `.env` を Access に戻します。
+PostgreSQL専用exeでは設定変更だけでAccessへ戻せません。
+`build_exe.ps1 -Backend access`で`dist/access/外観検査記録照会.exe`を生成し、対象PCのAccess ODBCドライバーも確認してください。
 
 ```env
 DB_BACKEND=access

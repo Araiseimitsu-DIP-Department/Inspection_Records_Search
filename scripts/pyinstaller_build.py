@@ -4,10 +4,43 @@ from __future__ import annotations
 
 import subprocess
 import sys
+import argparse
 from pathlib import Path
+
+from dotenv import dotenv_values, set_key
+
+
+POSTGRES_ENV_KEYS = {
+    "POSTGRES_CONNECTION_URL", "DATABASE_URL", "POSTGRES_DSN",
+    "DELIVERY_LABEL_POSTGRES_CONNECTION_URL", "DELIVERY_LABEL_DATABASE_URL",
+    "POSTGRES_SCHEMA", "EXPORT_DIR",
+}
+
+
+def prepare_bundled_env(root: Path, backend: str) -> Path | None:
+    """Keep PostgreSQL settings without distributing Access-only settings."""
+    source = root / ".env"
+    if not source.is_file():
+        return None
+    if backend == "access":
+        return source
+    target = root / "build" / "postgres-config" / ".env"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text("", encoding="utf-8")
+    # Resolve references before dropping auxiliary variables such as DB_HOST.
+    settings = dotenv_values(source)
+    set_key(str(target), "DB_BACKEND", "postgres")
+    for key in sorted(POSTGRES_ENV_KEYS):
+        value = settings.get(key)
+        if value is not None:
+            set_key(str(target), key, value)
+    return target
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--backend", choices=("postgres", "access"), default="postgres")
+    backend = parser.parse_args().backend
     root = Path(__file__).resolve().parent.parent
     py = root / ".venv" / "Scripts" / "python.exe"
     if not py.is_file():
@@ -33,7 +66,8 @@ def main() -> int:
         if result.returncode != 0:
             raise SystemExit(result.returncode)
 
-    run([py, "-m", "pip", "install", "pyinstaller", "-r", "requirements.txt", "-q"])
+    requirements = "requirements-access.txt" if backend == "access" else "requirements.txt"
+    run([py, "-m", "pip", "install", "pyinstaller", "-r", requirements, "-q"])
     run([py, str(root / "scripts" / "generate_app_ico.py"), str(root)])
 
     ico = root / "build" / "app_icon.ico"
@@ -56,10 +90,15 @@ def main() -> int:
     if arai_logo_wt.is_file():
         add_data.extend(["--add-data", f"{arai_logo_wt};DESIGN"])
 
-    env_path = root / ".env"
-    if env_path.is_file():
+    marker = root / "build" / backend / "database_backend.txt"
+    marker.parent.mkdir(parents=True, exist_ok=True)
+    marker.write_text(backend, encoding="utf-8")
+    add_data.extend(["--add-data", f"{marker};."])
+
+    env_path = prepare_bundled_env(root, backend)
+    if env_path is not None:
         add_data.extend(["--add-data", f"{env_path};."])
-        print("Bundling .env into the executable.")
+        print(f"Bundling {backend} settings into the executable (values are not logged).")
     else:
         print(
             "Warning: .env not found, so it will not be bundled. "
@@ -67,6 +106,19 @@ def main() -> int:
         )
 
     exe_name = "外観検査記録照会"
+    profile_args = ["--workpath", str(root / "build" / backend)]
+    if backend == "postgres":
+        for module in (
+            "pyodbc", "pypyodbc", "win32com",
+            "inspection_records_search.infrastructure.access_gateway",
+        ):
+            profile_args.extend(["--exclude-module", module])
+    else:
+        # Keep an Access-capable artifact separate from the production build.
+        profile_args.extend([
+            "--distpath", str(root / "dist" / "access"),
+            "--specpath", str(root / "build" / "access"),
+        ])
     cmd = [
         str(py),
         "-m",
@@ -97,11 +149,14 @@ def main() -> int:
         "PyQt5",
         "--exclude-module",
         "qtpy",
+        *profile_args,
         *add_data,
         "main.py",
     ]
     run(cmd)
-    dist = root / "dist" / f"{exe_name}.exe"
+    dist_dir = root / "dist" if backend == "postgres" else root / "dist" / "access"
+    dist = dist_dir / f"{exe_name}.exe"
+    run([py, str(root / "scripts" / "verify_build.py"), str(dist), "--backend", backend])
     print(f"Built: {dist}")
     return 0
 

@@ -1,0 +1,10 @@
+---
+description: 検査照会プロジェクトの恒常的な開発制約
+alwaysApply: true
+---
+
+- 既存機能の仕様を維持し、変更は依頼範囲に限定する。
+- Access対応ソースを保持する。共通処理と専用依存を区別し、PostgreSQL起動経路からAccess専用モジュールを読み込まない。
+- Windows / Edge WebView2 / PyInstallerの既存構成を優先する。UI共通依存をAccess依存と推測して除外しない。
+- Confirmed、Assumption、Unknownを区別する。コードとDocsの矛盾を無断で業務仕様へ変換しない。
+- ユーザーの既存変更を保持し、不要なリファクタリングや依存更新を避ける。

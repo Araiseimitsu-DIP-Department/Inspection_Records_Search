@@ -16,6 +16,7 @@ Access または PostgreSQL の外観検査データを参照し、検索結果�
 ## DBバックエンド
 
 `.env` の `DB_BACKEND` で切り替えます。
+通常の配布exeはPostgreSQL専用です。Accessへの切替にはAccess対応版の再ビルドが必要です。
 
 | 値 | 内容 |
 |---|---|
@@ -116,6 +117,11 @@ EXPORT_DIR=
 ## PostgreSQL移行
 
 詳細は [docs/postgresql-migration.md](docs/postgresql-migration.md) を参照してください。
+移行スクリプトはAccessを読むため、実行環境には追加依存を導入してください。
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements-access.txt
+```
 
 dry-run:
 
@@ -138,6 +144,8 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
+`requirements.txt`はPostgreSQL運用用です。Accessで開発・移行する場合は`requirements-access.txt`を使用してください。
+
 ## 開発起動
 
 ```powershell
@@ -151,10 +159,20 @@ python -m venv .venv
 ```
 
 ビルド結果は `dist\外観検査記録照会.exe` です。
+Access専用ライブラリとAccess設定を除外し、ビルド後にexe内部を自動検査します。開発用の元`.env`は変更しません。
+
+Access対応版（別フォルダに生成）:
+
+```powershell
+.\build_exe.ps1 -Backend access
+```
+
+ビルド結果は `dist\access\外観検査記録照会.exe` です。Accessを使用するPCにはMicrosoft Access ODBCドライバーが必要です。
+検証方法と未検証事項は [docs/RELEASE.md](docs/RELEASE.md)、AI開発の参照先は [AGENTS.md](AGENTS.md) を参照してください。
 
 ## 補足
 
-- 検査員リストはアプリデザインに合わせた独自ドロップダウンで表示し、画面上は検査員IDではなく名前だけを表示します。
+- 検査員リストはアプリデザインに合わせた独自ドロップダウンで表示し、画面上は検査員名だけを表示します。検査員名が未登録・空欄のマスタは候補から除外し、IDは検索用に内部で保持します。候補リストは結果カードの手前に表示し、スクロールで最後まで選択できます。
 - 検査員別明細と検査員別集計の列順は Access 画面に合わせています。
 - `production_lot_summary` / `production_lot_aggregate` view は使用しません。
 - PostgreSQL 側の物理名は英語表記、画面と Excel 出力の表示列は日本語表記です。

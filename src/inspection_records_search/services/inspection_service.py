@@ -9,7 +9,7 @@ from inspection_records_search.application.inspection_use_case import (
 )
 from inspection_records_search.config import get_application_base_dir, resolve_export_dir
 from inspection_records_search.domain.repositories import InspectionRepository
-from inspection_records_search.infrastructure.access_gateway import (
+from inspection_records_search.domain.process_options import (
     DEFAULT_KOUTEI_FALLBACK,
 )
 from inspection_records_search.infrastructure.repository_factory import (

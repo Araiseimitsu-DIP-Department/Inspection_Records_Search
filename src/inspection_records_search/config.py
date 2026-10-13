@@ -77,8 +77,27 @@ def get_database_backend() -> str:
     return (
         os.getenv("DB_BACKEND")
         or os.getenv("DATABASE_BACKEND")
+        or get_build_backend()
         or "access"
     ).strip().lower()
+
+
+def get_build_backend() -> str:
+    """Return the frozen build's backend profile; development supports both."""
+    if getattr(sys, "frozen", False):
+        marker = resource_path("database_backend.txt")
+        if marker.is_file():
+            return marker.read_text(encoding="utf-8").strip()
+    return ""
+
+
+def validate_build_backend(backend: str) -> tuple[bool, str]:
+    if get_build_backend() == "postgres" and backend == "access":
+        return False, (
+            "この実行ファイルはPostgreSQL専用です。DB_BACKEND=postgresを設定してください。"
+            "Accessへ戻す場合は build_exe.ps1 -Backend access で再ビルドしてください。"
+        )
+    return True, ""
 
 
 def get_postgres_dsn() -> str:
@@ -129,6 +148,9 @@ def validate_access_db_path(path: str) -> tuple[bool, str]:
 def validate_database_settings() -> tuple[bool, str]:
     """Validate the configured database connection settings."""
     backend = get_database_backend()
+    ok, message = validate_build_backend(backend)
+    if not ok:
+        return False, message
     if backend == "access":
         return validate_access_db_path(get_access_db_path())
     if backend == "postgres":
